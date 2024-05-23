@@ -1,7 +1,3 @@
-from .mouse_event import MouseEvent
-from .keyboard_event import KeyboardEvent
-
-
 class Event:
     def __init__(self, type: str):
         self.type = type
@@ -10,11 +6,14 @@ class Event:
         return {"type": self.type}
 
     def fromJson(self, json: dict):
-        self.type = str(json["type"])
+        self.type = str(json.get("type"))
 
     @staticmethod
     def parse(json: dict) -> "Event":
-        type = str(json["type"])
+        from .mouse_event import MouseEvent
+        from .keyboard_event import KeyboardEvent
+
+        type = str(json.get("type"))
         switch = {
             "mouse": MouseEvent,
             "keyboard": KeyboardEvent,

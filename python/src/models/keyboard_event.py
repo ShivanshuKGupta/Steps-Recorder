@@ -17,9 +17,10 @@ class KeyboardEvent(Event):
         key: str | None = None,
         specialKey: SpecialKey | None = None,
     ):
-        if (key != None) ^ (specialKey != None):
+        if not ((key != None) ^ (specialKey != None)):
             raise ValueError(
                 "Either key or specialKey must be set and the other must be None"
+                "\nkey: " + str(key) + " specialKey: " + str(specialKey)
             )
         super().__init__(KeyboardEvent.eventType)
         self.key = key
@@ -36,14 +37,16 @@ class KeyboardEvent(Event):
 
     def __load(self, json: dict):
         super().fromJson(json)
-        self.key = json["key"]
-        self.state = KeyboardButtonState[json["state"]]
+        self.key = json.get("key")
+        self.state = KeyboardButtonState[json.get("state")]
         self.specialKey = (
-            SpecialKey[str(json["specialKey"])] if json["specialKey"] != None else None
+            SpecialKey[json.get("specialKey")]
+            if json.get("specialKey") != None
+            else None
         )
 
     @staticmethod
     def fromJson(json: dict) -> "KeyboardEvent":
-        event = KeyboardEvent(KeyboardButtonState.press)
+        event = KeyboardEvent(KeyboardButtonState.press, key="a")
         event.__load(json)
         return event

@@ -47,12 +47,14 @@ class MouseEvent(Event):
 
     def __load(self, json: dict):
         super().fromJson(json)
-        self.mouseEventType = MouseEventType[str(json["mouseEventType"])]
-        self.x = json["x"]
-        self.y = json["y"]
-        self.button = MouseBttn[str(json["button"])] if json["button"] != None else None
-        self.dx = json["dx"]
-        self.dy = json["dy"]
+        self.mouseEventType = MouseEventType[str(json.get("mouseEventType"))]
+        self.x = json.get("x")
+        self.y = json.get("y")
+        self.button = (
+            MouseBttn[str(json.get("button"))] if json.get("button") != None else None
+        )
+        self.dx = json.get("dx")
+        self.dy = json.get("dy")
 
     @staticmethod
     def fromJson(json: dict) -> "MouseEvent":
