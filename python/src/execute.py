@@ -1,4 +1,5 @@
 import json
+import sys
 
 from models.event import Event
 from models.keyboard_event import *
@@ -30,6 +31,18 @@ def handle_mouse_event(event: MouseEvent):
     elif event.mouseEventType == MouseEventType.scroll:
         mouse.scroll(event.dx, event.dy)
 
+
+if len(sys.argv) < 2:
+    print("Usage: python3 watch.py <output_file>")
+    sys.exit(1)
+
+input_file = sys.argv[1].removeprefix('"').removesuffix('"')
+
+try:
+    sys.stdin = open(input_file, "r")
+except Exception as e:
+    print(f"Error: {e}")
+    sys.exit(2)
 
 while True:
     try:
