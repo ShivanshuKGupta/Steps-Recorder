@@ -1,9 +1,11 @@
-from models.keyboard_event import *
+from watcher.keyboard_watcher import get_keyboard_watcher
+from watcher.mouse_watcher import get_mouse_watcher
 
-newEvent = KeyboardEvent(
-    state=KeyboardButtonState.press,
-    # key="a",
-    specialKey=SpecialKey.enter,
-)
+keyboard_listener = get_keyboard_watcher()
+keyboard_listener.start()
 
-print(newEvent.toJson())
+mouse_listener = get_mouse_watcher()
+mouse_listener.start()
+
+keyboard_listener.join()
+mouse_listener.join()

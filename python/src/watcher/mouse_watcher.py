@@ -1,13 +1,20 @@
-from models.mouse_event import *
+import os
+import sys
+
 from pynput import mouse
 
+folder = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(folder)
 
-def on_move(x, y):
+from models.mouse_event import *
+
+
+def __on_move(x, y):
     event = MouseEvent(mouseEventType=MouseEventType.move, x=x, y=y)
     print(event.toJson())
 
 
-def on_click(x, y, button, pressed):
+def __on_click(x, y, button, pressed):
     mouseEventType = None
     if pressed:
         mouseEventType = MouseEventType.press
@@ -17,16 +24,10 @@ def on_click(x, y, button, pressed):
     print(event.toJson())
 
 
-def on_scroll(x, y, dx, dy):
+def __on_scroll(x, y, dx, dy):
     event = MouseEvent(mouseEventType=MouseEventType.scroll, x=x, y=y, dx=dx, dy=dy)
     print(event.toJson())
 
 
-with mouse.Listener(
-    on_move=on_move, on_click=on_click, on_scroll=on_scroll
-) as listener:
-    listener.join()
-
-# ...or, in a non-blocking fashion:
-listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
-listener.start()
+def get_mouse_watcher():
+    return mouse.Listener(on_move=__on_move, on_click=__on_click, on_scroll=__on_scroll)
