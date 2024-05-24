@@ -20,6 +20,8 @@ void main() {
             y: 100,
           ),
         ],
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final json = script.toJson();
@@ -27,6 +29,8 @@ void main() {
 
       expect(newScript.title, script.title);
       expect(newScript.description, script.description);
+      expect(newScript.createdAt, script.createdAt);
+      expect(newScript.updatedAt, script.updatedAt);
       expect(newScript.events.length, script.events.length);
       expect(script.events.length, newScript.events.length);
       for (var i = 0; i < newScript.events.length; i++) {

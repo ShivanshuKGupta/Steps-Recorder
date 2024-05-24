@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'globals.dart';
-import 'screens/home_screen.dart';
+import 'screens/home/home_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

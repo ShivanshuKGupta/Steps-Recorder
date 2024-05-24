@@ -7,3 +7,5 @@ final pythonScriptsFolderPath = kDebugMode
     : '${Directory.current.absolute.path}${Platform.pathSeparator}python_scripts';
 
 final outputFolder = '$pythonScriptsFolderPath/outputs';
+
+final scriptsFolder = '$pythonScriptsFolderPath/scripts';
