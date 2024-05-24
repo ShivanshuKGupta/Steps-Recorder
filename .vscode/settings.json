@@ -27,5 +27,6 @@
         "source.fixAll": "explicit",
         "source.organizeImports": "explicit"
     },
-    "code-runner.customCommand": "./update.bat"
+    "code-runner.customCommand": "./update.bat",
+    "python.analysis.typeCheckingMode": "basic"
 }
