@@ -1,4 +1,5 @@
 from enum import Enum
+
 from .event import Event
 from .special_keys import SpecialKey
 
@@ -50,3 +51,6 @@ class KeyboardEvent(Event):
         event = KeyboardEvent(KeyboardButtonState.press, key="a")
         event.__load(json)
         return event
+
+    def __str__(self):
+        return f"KeyboardEvent({self.state.name}, {self.key}, {self.specialKey})"

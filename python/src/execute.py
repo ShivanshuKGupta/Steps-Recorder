@@ -22,10 +22,10 @@ def handle_mouse_event(event: MouseEvent):
     if event.mouseEventType == MouseEventType.move:
         mouse.position = (event.x, event.y)
     elif event.mouseEventType == MouseEventType.press:
-        button = pyn_mouse.Button[event.button]
+        button = pyn_mouse.Button[event.button.name]
         mouse.press(button)
     elif event.mouseEventType == MouseEventType.release:
-        button = pyn_mouse.Button[event.button]
+        button = pyn_mouse.Button[event.button.name]
         mouse.release(button)
     elif event.mouseEventType == MouseEventType.scroll:
         mouse.scroll(event.dx, event.dy)

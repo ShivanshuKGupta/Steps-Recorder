@@ -1,4 +1,5 @@
 from enum import Enum
+
 from .event import Event
 
 
@@ -61,3 +62,6 @@ class MouseEvent(Event):
         event = MouseEvent(MouseEventType.move, 0, 0)
         event.__load(json)
         return event
+
+    def __str__(self):
+        return f"MouseEvent({self.mouseEventType.name}, {self.x}, {self.y}, {self.button}, {self.dx}, {self.dy})"
