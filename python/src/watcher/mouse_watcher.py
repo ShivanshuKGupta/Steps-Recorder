@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -11,7 +12,7 @@ from models.mouse_event import *
 
 def __on_move(x, y):
     event = MouseEvent(mouseEventType=MouseEventType.move, x=x, y=y)
-    print(event.toJson())
+    print(json.dumps(event.toJson()))
 
 
 def __on_click(x, y, button, pressed):
@@ -21,12 +22,12 @@ def __on_click(x, y, button, pressed):
     else:
         mouseEventType = MouseEventType.release
     event = MouseEvent(mouseEventType=mouseEventType, x=x, y=y, button=button)
-    print(event.toJson())
+    print(json.dumps(event.toJson()))
 
 
 def __on_scroll(x, y, dx, dy):
     event = MouseEvent(mouseEventType=MouseEventType.scroll, x=x, y=y, dx=dx, dy=dy)
-    print(event.toJson())
+    print(json.dumps(event.toJson()))
 
 
 def get_mouse_watcher():

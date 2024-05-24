@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -16,12 +17,14 @@ def __on_press(key):
     if key == __last_key:
         return
     __last_key = key
+    if key == keyboard.Key.alt_gr:
+        return False
     event = KeyboardEvent(state=KeyboardButtonState.press, key="a")
     try:
         event.key = f"{key.char}"
     except AttributeError:
         event.specialKey = SpecialKey[str(key).split(".")[-1]]
-    print(event.toJson())
+    print(json.dumps(event.toJson()))
 
 
 def __on_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
@@ -32,7 +35,7 @@ def __on_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
         event.key = f"{key.char}"
     except AttributeError:
         event.specialKey = SpecialKey[str(key).split(".")[-1]]
-    print(event.toJson())
+    print(json.dumps(event.toJson()))
 
 
 def get_keyboard_watcher():

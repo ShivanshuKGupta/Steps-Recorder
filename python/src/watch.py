@@ -8,4 +8,4 @@ mouse_listener = get_mouse_watcher()
 mouse_listener.start()
 
 keyboard_listener.join()
-mouse_listener.join()
+# mouse_listener.join()
