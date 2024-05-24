@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../models/events/event.dart';
+import '../models/events/keyboard/keyboard_event.dart';
+import '../models/events/mouse/mouse_event.dart';
 import '../services/execute_service.dart';
 import '../services/notification_service.dart';
 import '../services/watcher_service.dart';
@@ -15,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  List<String> events = [];
+  List<Event> events = [];
   final watcher = Watcher(outputFile: 'output.txt');
   final executer = ExecuteService(outputFile: 'output.txt');
   late final Ticker ticker;
@@ -23,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final opFile = File(executer.outputFilePath);
+      events.clear();
+      events.addAll(
+          (await opFile.readAsLines()).map((e) => Event.parse(json.decode(e))));
+    });
     watcher.addStdoutListener(_listener);
     ticker = createTicker((_) {
       setState(() {});
@@ -69,7 +79,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       body: ListView.builder(
         itemCount: events.length,
         itemBuilder: (context, index) {
-          return Text(events[index]);
+          final event = events[index];
+          if (event is KeyboardEvent) {
+            return Text(event.specialKey?.name ??
+                event.key ??
+                'Keybord Event Not Found');
+          } else if (event is MouseEvent) {
+            return Text(event.mouseEventType.name);
+          } else {
+            return const Text('Error in event parsing');
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -80,7 +99,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               showMsg('Stopped watching');
               final opFile = File(watcher.outputFilePath);
               events.clear();
-              events.addAll(await opFile.readAsLines());
+              events.addAll((await opFile.readAsLines())
+                  .map((e) => Event.parse(json.decode(e))));
               setState(() {});
             } else {
               await watcher.start();
@@ -100,6 +120,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _listener(String data) {
-    events.add(data);
+    showMsg(data);
   }
 }
