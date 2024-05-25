@@ -78,7 +78,7 @@ class Script extends ExecuteService {
   }
 }
 
-Future<List<Script>> loadScripts() async {
+Future<List<Script>> loadAllScripts() async {
   final folder = Directory(scriptsFolder);
   if (!await folder.exists()) {
     await folder.create();
@@ -86,13 +86,14 @@ Future<List<Script>> loadScripts() async {
   final files = await folder.list().map((e) => File(e.path)).toList();
   final scripts = <Script>[];
   for (final file in files) {
+    if (!file.path.endsWith('.json')) continue;
     try {
       final script = Script.fromJson(
           (json.decode(await file.readAsString()) as Map<String, dynamic>));
       scripts.add(script);
     } catch (e) {
       scripts.add(Script(
-        title: file.path.split('/').last,
+        title: file.path.split('/').last.split('\\').last.split('.').first,
         description: "This script's file is corrupted",
         events: [],
         createdAt: DateTime.now(),

@@ -12,7 +12,11 @@ mouse = pyn_mouse.Controller()
 
 
 def handle_keyboard_event(event: KeyboardEvent):
-    key = event.key if event.key is not None else pyn_keyboard.Key[event.specialKey]
+    key = (
+        pyn_keyboard.Key[event.specialKey]
+        if event.specialKey is not None
+        else event.key
+    )
     if event.state == KeyboardButtonState.press:
         keyboard.press(key)
     else:
@@ -23,9 +27,11 @@ def handle_mouse_event(event: MouseEvent):
     if event.mouseEventType == MouseEventType.move:
         mouse.position = (event.x, event.y)
     elif event.mouseEventType == MouseEventType.press:
+        mouse.position = (event.x, event.y)
         button = pyn_mouse.Button[event.button.name]
         mouse.press(button)
     elif event.mouseEventType == MouseEventType.release:
+        mouse.position = (event.x, event.y)
         button = pyn_mouse.Button[event.button.name]
         mouse.release(button)
     elif event.mouseEventType == MouseEventType.scroll:

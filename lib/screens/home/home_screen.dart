@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _loadScripts() {
-    loadScripts().then((value) => setState(() {
+    loadAllScripts().then((value) => setState(() {
           scripts = value;
           scripts.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
         }));

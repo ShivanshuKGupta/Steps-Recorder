@@ -76,12 +76,12 @@ abstract class ProcessService {
   /// Adds a listener to the process
   /// which is called when the process has output
   /// or changes its [status]
-  void addStdoutListener(
+  void addListener(
           void Function(ProcessStatus status, String? data) listener) =>
       _listeners.add(listener);
 
   /// Removes a listener from the process
-  bool removeStdoutListener(
+  bool removeListener(
           void Function(ProcessStatus status, String? data) listener) =>
       _listeners.remove(listener);
 
