@@ -13,7 +13,7 @@ class Script extends ExecuteService {
   DateTime updatedAt;
 
   File get file => File(scriptFilePath);
-  late final executeService = ExecuteService(scriptName: file.path);
+  late final executeService = ExecuteService(scriptFilePath: scriptFilePath);
 
   Script({
     required this.title,
@@ -21,7 +21,7 @@ class Script extends ExecuteService {
     required this.createdAt,
     required this.updatedAt,
     this.description,
-  }) : super(scriptName: '$title.json');
+  }) : super(scriptFilePath: '$scriptsFolder/$title.json');
 
   Map<String, dynamic> toJson() {
     return {
@@ -41,7 +41,7 @@ class Script extends ExecuteService {
             .toList(),
         createdAt = DateTime.parse(data['createdAt']),
         updatedAt = DateTime.parse(data['updatedAt']),
-        super(scriptName: '${data['title']}.json');
+        super(scriptFilePath: '$scriptsFolder/${data['title']}.json');
 
   Future<void> create() async {
     if (await file.exists()) {
@@ -61,6 +61,20 @@ class Script extends ExecuteService {
 
   Future<void> delete() async {
     await file.delete();
+  }
+
+  @override
+  Future<void> play() async {
+    await _createTmpFile();
+    await super.play();
+  }
+
+  Future<void> _createTmpFile() async {
+    final tmpFile = File('$scriptFilePath.tmp');
+    if (await tmpFile.exists()) {
+      await tmpFile.delete();
+    }
+    await tmpFile.writeAsString(events.map((e) => e.toString()).join('\n'));
   }
 }
 
