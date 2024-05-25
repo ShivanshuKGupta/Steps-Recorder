@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:steps_recorder/models/events/keyboard/keyboard_event.dart';
 import 'package:steps_recorder/models/events/mouse/mouse_event.dart';
-import 'package:steps_recorder/models/events/script.dart';
+import 'package:steps_recorder/models/events/script/script.dart';
 
 void main() {
   group('Script Tests', () {

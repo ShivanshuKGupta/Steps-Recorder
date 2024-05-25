@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../globals.dart';
-import '../../models/events/script.dart';
+import '../../models/events/script/script.dart';
 import '../../models/extensions/datetime_extension.dart';
 import '../../utils/widgets/loading_icon_button.dart';
+import 'script_edit_screen.dart';
 
 class ScriptWidget extends StatelessWidget {
   final Script script;
@@ -70,7 +71,13 @@ class ScriptWidget extends StatelessWidget {
                   ),
                   LoadingIconButton(
                     onPressed: () async {
-                      // TODO: edit
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ScriptEditScreen(
+                            script: script,
+                          ),
+                        ),
+                      );
                     },
                     icon: const Icon(
                       Icons.edit_rounded,

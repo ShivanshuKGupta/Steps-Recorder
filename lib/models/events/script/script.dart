@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../config.dart';
-import 'event.dart';
+import '../../../config.dart';
+import '../../../services/execute_service.dart';
+import '../event.dart';
 
-class Script {
+class Script extends ExecuteService {
   String title;
   String? description;
   List<Event> events;
   DateTime createdAt;
   DateTime updatedAt;
+
+  File get file => File(scriptFilePath);
+  late final executeService = ExecuteService(scriptName: file.path);
 
   Script({
     required this.title,
@@ -17,7 +21,7 @@ class Script {
     required this.createdAt,
     required this.updatedAt,
     this.description,
-  });
+  }) : super(scriptName: '$title.json');
 
   Map<String, dynamic> toJson() {
     return {
@@ -36,10 +40,10 @@ class Script {
             .map((e) => Event.parse(e as Map<String, dynamic>))
             .toList(),
         createdAt = DateTime.parse(data['createdAt']),
-        updatedAt = DateTime.parse(data['updatedAt']);
+        updatedAt = DateTime.parse(data['updatedAt']),
+        super(scriptName: '${data['title']}.json');
 
   Future<void> create() async {
-    final file = File('$scriptsFolder/$title.json');
     if (await file.exists()) {
       throw 'File already exists';
     }
@@ -48,7 +52,6 @@ class Script {
   }
 
   Future<void> save() async {
-    final file = File('$scriptsFolder/$title.json');
     if (!await file.exists()) {
       throw Exception('File does not exist');
     }
@@ -57,7 +60,6 @@ class Script {
   }
 
   Future<void> delete() async {
-    final file = File('$scriptsFolder/$title.json');
     await file.delete();
   }
 }

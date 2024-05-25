@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
-import '../../models/events/script.dart';
+import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
-import 'script_widget.dart';
+import '../script/script_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -63,9 +63,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 style: textTheme.bodyLarge,
               ),
             )
-          : GridView.extent(
-              maxCrossAxisExtent: 300,
-              children: scripts.map((e) => ScriptWidget(script: e)).toList(),
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.extent(
+                maxCrossAxisExtent: 300,
+                children: scripts.map((e) => ScriptWidget(script: e)).toList(),
+              ),
             ),
     );
   }
