@@ -25,7 +25,7 @@ class Script {
   late final String scriptFilePath = '$scriptsFolder/$title.json';
 
   /// The file object of the script
-  File get file => File(scriptFilePath);
+  late final File file = File(scriptFilePath);
 
   /// The service to execute the script
   late final _executeService = ExecuteService(scriptFilePath: scriptFilePath);
@@ -150,13 +150,12 @@ Future<List<Script>> loadAllScripts() async {
   if (!await folder.exists()) {
     await folder.create();
   }
-  final files = await folder.list().map((e) => File(e.path)).toList();
+  final files = await folder.list().toList();
   final scripts = <Script>[];
   for (final file in files) {
     if (!file.path.endsWith('.json')) continue;
     try {
-      final script = Script.fromJson(
-          (json.decode(await file.readAsString()) as Map<String, dynamic>));
+      final script = await loadScript(file.absolute.path);
       scripts.add(script);
     } catch (e) {
       scripts.add(Script(
@@ -169,4 +168,15 @@ Future<List<Script>> loadAllScripts() async {
     }
   }
   return scripts;
+}
+
+/// Loads a script from the scripts folder
+/// Just give the name of the file not the full path
+Future<Script> loadScript(String scriptPath) async {
+  final file = File(scriptPath);
+  if (!await file.exists()) {
+    throw Exception('File does not exist: $scriptPath');
+  }
+  final data = json.decode(await file.readAsString()) as Map<String, dynamic>;
+  return Script.fromJson(data);
 }

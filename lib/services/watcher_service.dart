@@ -18,6 +18,25 @@ class WatchService extends ProcessService {
 
   /// Starts the watcher
   Future<void> record() async {
+    _onExit = (ProcessStatus status) async {
+      try {
+        Script script = await loadScript(scriptFilePath);
+        final tmpFile = File(tmpScriptFilePath);
+        final events = (await tmpFile.readAsString()).split('\n').map((e) {
+          try {
+            return Event.parse(json.decode(e));
+          } catch (e) {
+            return null;
+          }
+        });
+        for (var e in events) {
+          if (e != null) script.events.add(e);
+        }
+        await script.save();
+      } catch (e) {
+        showMsg('Error Saving Script: $e');
+      }
+    };
     await _start(
         'python', ['$pythonScriptsFolderPath/src/watch.py', tmpScriptFilePath]);
   }

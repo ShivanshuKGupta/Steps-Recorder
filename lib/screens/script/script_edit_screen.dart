@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -23,17 +24,7 @@ class ScriptEditScreen extends StatefulWidget {
 
 class _ScriptEditScreenState extends State<ScriptEditScreen> {
   late Script script;
-  final events = <Event>[
-    // if (kDebugMode) ...[
-    //   KeyboardEvent(state: KeyboardButtonState.press, key: 'a'),
-    //   KeyboardEvent(state: KeyboardButtonState.release, key: 'a'),
-    //   MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.press),
-    //   MouseEvent(x: 2, y: 2, mouseEventType: MouseEventType.move),
-    //   MouseEvent(x: 2, y: 2, mouseEventType: MouseEventType.release),
-    //   MouseEvent(
-    //       x: 0, y: 0, dx: 0, dy: -1, mouseEventType: MouseEventType.scroll),
-    // ]
-  ];
+  final events = <Event>[];
 
   final allTypeOfEvents = <Event>[
     KeyboardEvent(state: KeyboardButtonState.press, key: 'a'),
@@ -48,13 +39,19 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   void initState() {
     super.initState();
     script = widget.script;
+    script.file.watch().listen(_fileChangeHandler);
+    script.addListener(_listener);
     events.addAll(script.events);
   }
 
   @override
   void dispose() {
     script.events = events;
-    unawaited(script.save());
+    script.file.watch().listen(null);
+    script.removeListener(_listener);
+    unawaited(script.save().onError(
+          (error, stackTrace) => showMsg('Error Saving Script: $error'),
+        ));
     super.dispose();
   }
 
@@ -112,8 +109,17 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                 await script.record();
               }
             },
-            label: const Text('Record'),
-            icon: const Icon(Icons.fiber_manual_record_rounded),
+            label: Text(script.watchStatus == ProcessStatus.running
+                ? 'Stop'
+                : 'Record'),
+            icon: Icon(
+              script.watchStatus == ProcessStatus.running
+                  ? Icons.stop_rounded
+                  : Icons.fiber_manual_record,
+              color: script.watchStatus == ProcessStatus.running
+                  ? Colors.red
+                  : null,
+            ),
           ),
         ],
       ),
@@ -203,5 +209,17 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
         },
       ),
     );
+  }
+
+  void _listener(ProcessStatus p1, String? p2) {
+    setState(() {});
+  }
+
+  Future<void> _fileChangeHandler(FileSystemEvent event) async {
+    script = await loadScript(script.file.absolute.path);
+    setState(() {
+      events.clear();
+      events.addAll(script.events);
+    });
   }
 }

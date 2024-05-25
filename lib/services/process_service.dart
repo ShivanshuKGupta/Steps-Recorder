@@ -3,6 +3,9 @@ import 'dart:developer' as dev;
 import 'dart:io';
 
 import '../config.dart';
+import '../models/events/event.dart';
+import '../models/events/script/script.dart';
+import 'notification_service.dart';
 
 part 'execute_service.dart';
 part 'watcher_service.dart';
