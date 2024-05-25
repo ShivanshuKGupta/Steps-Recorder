@@ -6,7 +6,7 @@ enum MouseEventType { move, press, release, scroll }
 
 class MouseEvent extends Event {
   static const String eventType = 'mouse';
-  final MouseEventType mouseEventType;
+  MouseEventType mouseEventType;
   num x;
   num y;
 

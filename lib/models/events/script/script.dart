@@ -2,18 +2,42 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../../config.dart';
-import '../../../services/execute_service.dart';
+import '../../../services/process_service.dart';
 import '../event.dart';
 
-class Script extends ExecuteService {
+class Script {
+  /// The title of the script
   String title;
+
+  /// The description of the script
   String? description;
+
+  /// The list of events in the script
   List<Event> events;
+
+  /// The date and time the script was created
   DateTime createdAt;
+
+  /// The date and time the script was last updated
   DateTime updatedAt;
 
+  /// The path of the script file
+  late final String scriptFilePath = '$scriptsFolder/$title.json';
+
+  /// The file object of the script
   File get file => File(scriptFilePath);
-  late final executeService = ExecuteService(scriptFilePath: scriptFilePath);
+
+  /// The service to execute the script
+  late final _executeService = ExecuteService(scriptFilePath: scriptFilePath);
+
+  /// The status of the execute service
+  ProcessStatus get executeStatus => _executeService.status;
+
+  /// The service to watch the script
+  late final _watchService = WatchService(scriptFilePath: scriptFilePath);
+
+  /// The status of the watch service
+  ProcessStatus get watchStatus => _watchService.status;
 
   Script({
     required this.title,
@@ -21,7 +45,7 @@ class Script extends ExecuteService {
     required this.createdAt,
     required this.updatedAt,
     this.description,
-  }) : super(scriptFilePath: '$scriptsFolder/$title.json');
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -40,9 +64,9 @@ class Script extends ExecuteService {
             .map((e) => Event.parse(e as Map<String, dynamic>))
             .toList(),
         createdAt = DateTime.parse(data['createdAt']),
-        updatedAt = DateTime.parse(data['updatedAt']),
-        super(scriptFilePath: '$scriptsFolder/${data['title']}.json');
+        updatedAt = DateTime.parse(data['updatedAt']);
 
+  /// Create the script file at [scriptFilePath]
   Future<void> create() async {
     if (await file.exists()) {
       throw 'File already exists';
@@ -51,6 +75,7 @@ class Script extends ExecuteService {
     await file.writeAsString(json.encode(toJson()));
   }
 
+  /// Save the script data to the file
   Future<void> save() async {
     if (!await file.exists()) {
       throw Exception('File does not exist');
@@ -59,16 +84,55 @@ class Script extends ExecuteService {
     await file.writeAsString(json.encode(toJson()));
   }
 
+  /// Deletes the script file
   Future<void> delete() async {
     await file.delete();
   }
 
-  @override
+  /// Executes the script
+  /// Use [watchStatus] to check the status of the service
   Future<void> play() async {
     await _createTmpFile();
-    await super.play();
+    await _executeService.play();
   }
 
+  /// Stops the script execution
+  void stop() {
+    _executeService.stop();
+  }
+
+  /// Records the script
+  Future<void> record() async {
+    await _watchService.record();
+  }
+
+  /// Stops the script recording
+  void stopRecording() {
+    _watchService.stopRecording();
+  }
+
+  /// Adds a listener to the script
+  ///
+  /// These listeners are called whenever the status of the
+  /// [watchStatus] or [executeStatus] changes
+  void addListener(void Function(ProcessStatus, String?) listener) {
+    _executeService.addListener(listener);
+    _watchService.addListener(listener);
+  }
+
+  /// Removes a listener from the script
+  ///
+  /// This listener will no longer be called when the status of the
+  /// [watchStatus] or [executeStatus] changes
+  void removeListener(void Function(ProcessStatus, String?) listener) {
+    _executeService.removeListener(listener);
+    _watchService.removeListener(listener);
+  }
+
+  /// Creates a temporary file to store the events
+  ///
+  /// This file is in turn used to execute the script
+  /// using the [_executeService]
   Future<void> _createTmpFile() async {
     final tmpFile = File('$scriptFilePath.tmp');
     if (await tmpFile.exists()) {
@@ -78,6 +142,9 @@ class Script extends ExecuteService {
   }
 }
 
+/// Loads all the scripts from the scripts folder
+///
+/// Returns a list of [Script] objects from the folder [scriptsFolder]
 Future<List<Script>> loadAllScripts() async {
   final folder = Directory(scriptsFolder);
   if (!await folder.exists()) {

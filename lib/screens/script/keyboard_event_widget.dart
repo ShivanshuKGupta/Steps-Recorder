@@ -27,8 +27,8 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
           ),
         ),
       ),
-      padding: const EdgeInsets.only(right: 10.0),
       child: ListTile(
+        leading: const Icon(Icons.keyboard_alt_rounded),
         title: Row(
           children: [
             Expanded(
@@ -105,7 +105,6 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                 },
               )
             : TextField(
-                // widget.event.specialKey?.name ?? widget.event.key ?? '',
                 maxLength: 1,
                 decoration: const InputDecoration(
                   alignLabelWithHint: true,

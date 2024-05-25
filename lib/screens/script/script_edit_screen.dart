@@ -3,11 +3,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
+import '../../globals.dart';
 import '../../models/events/event.dart';
 import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
-import '../../utils/widgets/loading_icon_button.dart';
+import '../../services/notification_service.dart';
+import '../../services/process_service.dart';
 import 'keyboard_event_widget.dart';
 import 'mouse_event_widget.dart';
 
@@ -42,8 +44,6 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.scroll),
   ];
 
-  final _controller = ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -65,78 +65,131 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(script.title),
-            Text(
-              script.description ?? 'No description',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Colors.grey,
-                  ),
+            TextField(
+              controller: TextEditingController(text: script.title),
+              decoration: InputDecoration(
+                hintText: 'No Title',
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: textTheme.titleLarge,
+              ),
+              style: textTheme.titleLarge,
+              onChanged: (value) {
+                script.title = value;
+              },
+              onEditingComplete: () async {
+                try {
+                  await script.save();
+                } catch (e) {
+                  showMsg('Error Saving Script Title: $e');
+                }
+              },
+            ),
+            const SizedBox(height: 5),
+            TextField(
+              controller: TextEditingController(text: script.description),
+              decoration: InputDecoration(
+                hintText: 'No Description',
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: textTheme.bodySmall,
+              ),
+              style: textTheme.bodySmall,
+              onChanged: (value) {
+                script.description = value;
+              },
             ),
           ],
         ),
         actions: [
-          /// Add a keyboard event button
-          LoadingIconButton(
-            icon: const Icon(
-              Icons.keyboard_rounded,
-              color: Colors.pink,
-            ),
+          ElevatedButton.icon(
             onPressed: () async {
-              final event = KeyboardEvent(
-                state: KeyboardButtonState.press,
-                key: 'a',
-              );
-              setState(() {
-                events.add(event);
-              });
-              _controller.animateTo(
-                _controller.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.decelerate,
-              );
+              if (script.watchStatus == ProcessStatus.running) {
+                script.stopRecording();
+              } else {
+                await script.record();
+              }
             },
-          ),
-
-          /// Add a mouse event button
-          LoadingIconButton(
-            icon: const Icon(
-              Icons.mouse_rounded,
-              color: Colors.purple,
-            ),
-            onPressed: () async {
-              final event = MouseEvent(
-                x: 0,
-                y: 0,
-                mouseEventType: MouseEventType.press,
-              );
-              setState(() {
-                events.add(event);
-              });
-              _controller.animateTo(
-                _controller.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.decelerate,
-              );
-            },
+            label: const Text('Record'),
+            icon: const Icon(Icons.fiber_manual_record_rounded),
           ),
         ],
       ),
       body: ReorderableListView(
-        scrollController: _controller,
+        footer: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Center(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      textStyle: textTheme.titleMedium,
+                    ),
+                    icon: const Icon(Icons.keyboard_alt_rounded),
+                    onPressed: () {
+                      final event = KeyboardEvent(
+                        state: KeyboardButtonState.press,
+                        key: 'a',
+                      );
+                      setState(() {
+                        events.add(event);
+                      });
+                    },
+                    label: Text('+', style: textTheme.titleMedium),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.mouse_rounded),
+                    onPressed: () {
+                      final event = MouseEvent(
+                        x: 0,
+                        y: 0,
+                        mouseEventType: MouseEventType.press,
+                      );
+                      setState(() {
+                        events.add(event);
+                      });
+                    },
+                    label: const Text('+'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         children: [
           for (final event in events)
-            if (event is KeyboardEvent)
-              KeyboardEventWidget(
-                key: ValueKey(event.toJson()),
-                event: event,
-              )
-            else if (event is MouseEvent)
-              MouseEventWidget(
-                key: ValueKey(event.toJson()),
-                event: event,
-              )
-            else
-              const Text('Unknown Event Type')
+            Row(
+              key: ValueKey(event.toJson()),
+              children: [
+                Expanded(
+                  child: switch (event.runtimeType) {
+                    const (KeyboardEvent) => KeyboardEventWidget(
+                        event: event as KeyboardEvent,
+                      ),
+                    const (MouseEvent) => MouseEventWidget(
+                        event: event as MouseEvent,
+                      ),
+                    _ => const Text('Unknown Event Type')
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      events.remove(event);
+                    });
+                  },
+                ),
+                const SizedBox(width: 30),
+              ],
+            ),
         ],
         onReorder: (oldIndex, newIndex) {
           log('Reorder: $oldIndex -> $newIndex');

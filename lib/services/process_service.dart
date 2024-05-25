@@ -1,5 +1,11 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'dart:io';
+
+import '../config.dart';
+
+part 'execute_service.dart';
+part 'watcher_service.dart';
 
 enum ProcessStatus {
   stopped,
@@ -11,47 +17,49 @@ enum ProcessStatus {
 /// A service to manage processes
 abstract class ProcessService {
   /// A function to call when the process starts
-  void Function()? onStart;
+  void Function()? _onStart;
 
   /// A function to call when the process exits
-  void Function(ProcessStatus status)? onExit;
+  void Function(ProcessStatus status)? _onExit;
 
   ProcessService();
 
   /// The status of the process
-  ProcessStatus status = ProcessStatus.stopped;
+  ProcessStatus _status = ProcessStatus.stopped;
+
+  ProcessStatus get status => _status;
 
   /// The process
   Process? _process;
 
   /// A list of listeners used to notify when the process has output
-  /// or changes its [status]
+  /// or changes its [_status]
   final List<void Function(ProcessStatus status, String? output)> _listeners =
       [];
 
   /// Logs a message
-  void log(dynamic msg);
+  void _log(dynamic msg);
 
   /// Starts the process
-  Future<void> start(String command, List<String> arguments) async {
-    if (status == ProcessStatus.running || _process != null) {
+  Future<void> _start(String command, List<String> arguments) async {
+    if (_status == ProcessStatus.running || _process != null) {
       throw 'This process is already running';
     }
 
     _process = await Process.start(command, arguments);
 
-    status = ProcessStatus.running;
-    onStart?.call();
+    _status = ProcessStatus.running;
+    _onStart?.call();
     notifyListeners(null);
 
     _process?.exitCode.then((exitCode) {
-      if (status == ProcessStatus.running) {
-        status = ProcessStatus.aborted;
+      if (_status == ProcessStatus.running) {
+        _status = ProcessStatus.aborted;
       }
 
-      log('Process exited with code $exitCode');
+      _log('Process exited with code $exitCode');
       _process = null;
-      onExit?.call(status);
+      _onExit?.call(_status);
       notifyListeners(null);
     });
 
@@ -59,14 +67,14 @@ abstract class ProcessService {
   }
 
   /// Stops the process
-  void stop() {
-    status = ProcessStatus.stopped;
+  void _stop() {
+    _status = ProcessStatus.stopped;
     _process?.stdin.writeln('exit');
   }
 
   /// Kills the process
-  void kill() {
-    status = ProcessStatus.killed;
+  void _kill() {
+    _status = ProcessStatus.killed;
     _process?.kill();
   }
 
@@ -75,7 +83,7 @@ abstract class ProcessService {
 
   /// Adds a listener to the process
   /// which is called when the process has output
-  /// or changes its [status]
+  /// or changes its [_status]
   void addListener(
           void Function(ProcessStatus status, String? data) listener) =>
       _listeners.add(listener);
@@ -86,10 +94,10 @@ abstract class ProcessService {
       _listeners.remove(listener);
 
   /// Notifies all listeners about the process's output
-  /// or [status]
+  /// or [_status]
   void notifyListeners(String? data) {
     for (final listener in _listeners) {
-      listener(status, data);
+      listener(_status, data);
     }
   }
 }

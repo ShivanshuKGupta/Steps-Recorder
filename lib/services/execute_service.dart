@@ -1,8 +1,4 @@
-import 'dart:developer' as dev;
-import 'dart:io';
-
-import '../config.dart';
-import 'process_service.dart';
+part of 'process_service.dart';
 
 /// A service to execute scripts
 /// Just give the path to the script file and make sure that a
@@ -13,12 +9,12 @@ class ExecuteService extends ProcessService {
   static final allServices = <String, ExecuteService>{};
 
   /// The path to the script file
-  String scriptFilePath;
+  final String scriptFilePath;
 
   ExecuteService({required this.scriptFilePath}) : super();
 
   @override
-  void log(dynamic msg) => dev.log(msg.toString(), name: 'Execute Service');
+  void _log(dynamic msg) => dev.log(msg.toString(), name: 'Execute Service');
 
   /// Starts the script and adds it to the [allServices] map
   Future<void> play() async {
@@ -34,17 +30,30 @@ class ExecuteService extends ProcessService {
       throw 'Another instance of the same script is already running';
     }
 
-    onStart = () {
+    _onStart = () {
       allServices[scriptFilePath] = this;
-      log('Script \'$scriptFilePath\' started');
+      _log('Script \'$scriptFilePath\' started');
     };
 
-    onExit = (status) {
+    _onExit = (status) {
       allServices.remove(scriptFilePath);
-      log('Script \'$scriptFilePath\' exited with status $status');
+      _log('Script \'$scriptFilePath\' exited with status $status');
     };
 
-    await start('python',
+    await _start('python',
         ['$pythonScriptsFolderPath/src/execute.py', '"$scriptFilePath.tmp"']);
+  }
+
+  /// Stops the script
+  ///
+  /// If the script doesn't stops within 500 milliseconds then
+  /// it will be killed
+  void stop() {
+    _stop();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (status == ProcessStatus.running) {
+        _kill();
+      }
+    });
   }
 }
