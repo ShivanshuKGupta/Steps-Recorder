@@ -28,7 +28,6 @@ class App extends StatelessWidget {
         ),
       ),
       home: const HomeScreen(),
-      // home: const MyHomePage(title: 'Draggable List View Try'),
     );
   }
 }

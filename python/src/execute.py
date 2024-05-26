@@ -1,5 +1,6 @@
 import json
 import sys
+from time import sleep
 
 from models.event import Event
 from models.keyboard_event import *
@@ -17,6 +18,8 @@ def handle_keyboard_event(event: KeyboardEvent):
         if event.specialKey is not None
         else event.key
     )
+    if key == pyn_keyboard.Key.space:
+        key = " "
     if event.state == KeyboardButtonState.press:
         keyboard.press(key)
     else:
@@ -24,6 +27,7 @@ def handle_keyboard_event(event: KeyboardEvent):
 
 
 def handle_mouse_event(event: MouseEvent):
+    sleep(0.01)
     if event.mouseEventType == MouseEventType.move:
         mouse.position = (event.x, event.y)
     elif event.mouseEventType == MouseEventType.press:

@@ -86,7 +86,7 @@ class ScriptWidget extends StatelessWidget {
                   ),
                   LoadingIconButton(
                     onPressed: () async {
-                      // TODO: play
+                      await script.play();
                     },
                     icon: const Icon(
                       Icons.play_arrow_rounded,

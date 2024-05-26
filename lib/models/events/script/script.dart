@@ -138,7 +138,8 @@ class Script {
     if (await tmpFile.exists()) {
       await tmpFile.delete();
     }
-    await tmpFile.writeAsString(events.map((e) => e.toString()).join('\n'));
+    await tmpFile
+        .writeAsString(events.map((e) => json.encode(e.toJson())).join('\n'));
   }
 }
 

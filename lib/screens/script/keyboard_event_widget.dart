@@ -17,6 +17,8 @@ class KeyboardEventWidget extends StatefulWidget {
 }
 
 class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
+  late final _keyController = TextEditingController(text: widget.event.key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,6 +30,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
         ),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.only(left: 16),
         leading: const Icon(Icons.keyboard_alt_rounded),
         title: Row(
           children: [
@@ -67,6 +70,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                 decoration: const InputDecoration(
                   isDense: true,
                   enabledBorder: InputBorder.none,
+                  prefixText: 'Type: ',
                 ),
                 onChanged: (String? value) {
                   setState(() {
@@ -74,64 +78,72 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                       widget.event.specialKey ??= SpecialKey.values.first;
                     } else {
                       widget.event.specialKey = null;
-                      widget.event.key ??= null;
+                      widget.event.key ??= 'a';
                     }
                   });
                 },
               ),
             ),
+            Expanded(
+              child: widget.event.specialKey != null
+                  ? DropdownButtonFormField<SpecialKey>(
+                      items: SpecialKey.values
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child:
+                                  Text(e.name.removeUnderScore.toPascalCase()),
+                            ),
+                          )
+                          .toList(),
+                      value: widget.event.specialKey,
+                      // style: textTheme.bodySmall,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        enabledBorder: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          widget.event.specialKey =
+                              value ?? SpecialKey.values.first;
+                        });
+                      },
+                    )
+                  : TextField(
+                      decoration: const InputDecoration(
+                        alignLabelWithHint: true,
+                        counter: SizedBox(),
+                        isDense: true,
+                        enabledBorder: InputBorder.none,
+                        prefixText: 'Key: ',
+                      ),
+                      style: textTheme.titleMedium,
+                      controller: _keyController,
+                      onChanged: (value) {
+                        if (value.length > 1) {
+                          value = value[1];
+                        }
+                        widget.event.key = value.isEmpty ? 'a' : value[0];
+                        _keyController.text = value;
+                      },
+                      onSubmitted: (value) {
+                        _keyController.text = value.isEmpty ? 'a' : value[0];
+                      },
+                      onEditingComplete: () {
+                        _keyController.text = widget.event.key!;
+                      },
+                    ),
+            ),
           ],
         ),
-        subtitle: widget.event.specialKey != null
-            ? DropdownButtonFormField<SpecialKey>(
-                items: SpecialKey.values
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e.name.toPascalCase()),
-                      ),
-                    )
-                    .toList(),
-                value: widget.event.specialKey,
-                style: textTheme.bodySmall,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  enabledBorder: InputBorder.none,
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    widget.event.specialKey = value ?? SpecialKey.values.first;
-                  });
-                },
-              )
-            : TextField(
-                maxLength: 1,
-                decoration: const InputDecoration(
-                  alignLabelWithHint: true,
-                  counter: SizedBox(),
-                  isDense: true,
-                  enabledBorder: InputBorder.none,
-                ),
-                controller: TextEditingController(text: widget.event.key),
-                onChanged: (value) {
-                  widget.event.key = value.isEmpty ? 'a' : value[0];
-                },
-                onSubmitted: (value) {
-                  setState(() {
-                    widget.event.key = value.isEmpty ? 'a' : value[0];
-                  });
-                },
-                onEditingComplete: () {
-                  setState(() {
-                    widget.event.key = widget.event.key ?? 'a';
-                  });
-                },
-              ),
         onFocusChange: (value) {
           if (!value) {
-            setState(() {
-              widget.event.key = widget.event.key ?? 'a';
-            });
+            setState(
+              () {
+                widget.event.key ??= 'a';
+                _keyController.text = widget.event.key!;
+              },
+            );
           }
         },
       ),
