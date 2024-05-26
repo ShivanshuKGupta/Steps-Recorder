@@ -37,11 +37,13 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.scroll),
   ];
 
+  final folderChangedStream = Directory(scriptsFolder).watch();
+
   @override
   void initState() {
     super.initState();
     script = widget.script;
-    Directory(scriptsFolder).watch().listen(_fileChangeHandler);
+    folderChangedStream.listen(_fileChangeHandler);
     script.addListener(_listener);
     events.addAll(script.events);
   }
@@ -49,7 +51,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   @override
   void dispose() {
     script.events = events;
-    script.file.watch().listen(null);
+    folderChangedStream.listen(null);
     script.removeListener(_listener);
     unawaited(script.save().onError(
           (error, stackTrace) => showMsg('Error Saving Script: $error'),

@@ -34,24 +34,7 @@ class WatchService extends ProcessService {
       // allServices.remove(scriptFilePath);
       _log('Script \'$scriptFilePath\' stopped recording with status $status');
 
-      try {
-        Script script = await loadScript(scriptFilePath);
-        final tmpFile = File(tmpScriptFilePath);
-        final events = (await tmpFile.readAsString()).split('\n').map((e) {
-          try {
-            return Event.parse(json.decode(e));
-          } catch (e) {
-            return null;
-          }
-        });
-        for (var e in events) {
-          if (e != null) script.events.add(e);
-        }
-        await script.save();
-        notifyListeners(null);
-      } catch (e) {
-        showMsg('Error Saving Script: $e');
-      }
+      await _saveEvents();
     };
 
     await _start(
@@ -69,5 +52,26 @@ class WatchService extends ProcessService {
         _kill();
       }
     });
+  }
+
+  Future<void> _saveEvents() async {
+    try {
+      Script script = await loadScript(scriptFilePath);
+      final tmpFile = File(tmpScriptFilePath);
+      final events = (await tmpFile.readAsString()).split('\n').map((e) {
+        try {
+          return Event.parse(json.decode(e));
+        } catch (e) {
+          return null;
+        }
+      });
+      script.events.clear();
+      for (var e in events) {
+        if (e != null) script.events.add(e);
+      }
+      await script.save();
+    } catch (e) {
+      showMsg('Error Saving Script: $e');
+    }
   }
 }
