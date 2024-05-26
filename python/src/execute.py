@@ -59,7 +59,7 @@ while True:
         input_str = input("")
         json_obj = json.loads(input_str)
         event = Event.parse(json_obj)
-        print(f"{event=}")
+        # print(f"{event=}")
         if type(event) is KeyboardEvent:
             handle_keyboard_event(event)
         elif type(event) is MouseEvent:

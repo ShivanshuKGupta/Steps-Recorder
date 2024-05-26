@@ -28,13 +28,15 @@ class Script {
   late final File file = File(scriptFilePath);
 
   /// The service to execute the script
-  late final _executeService = ExecuteService(scriptFilePath: scriptFilePath);
+  late final _executeService = ExecuteService.allServices[scriptFilePath] ??
+      ExecuteService(scriptFilePath: scriptFilePath);
 
   /// The status of the execute service
   ProcessStatus get executeStatus => _executeService.status;
 
   /// The service to watch the script
-  late final _watchService = WatchService(scriptFilePath: scriptFilePath);
+  late final _watchService = WatchService.allServices[scriptFilePath] ??
+      WatchService(scriptFilePath: scriptFilePath);
 
   /// The status of the watch service
   ProcessStatus get watchStatus => _watchService.status;
@@ -115,7 +117,7 @@ class Script {
   ///
   /// These listeners are called whenever the status of the
   /// [watchStatus] or [executeStatus] changes
-  void addListener(void Function(ProcessStatus, String?) listener) {
+  void addListener(void Function(ProcessStatus status, String? data) listener) {
     _executeService.addListener(listener);
     _watchService.addListener(listener);
   }

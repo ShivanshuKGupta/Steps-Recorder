@@ -3,6 +3,9 @@ part of 'process_service.dart';
 /// Service to watch for keyboard and mouse events to create a list of events
 /// in [scriptFilePath] file
 class WatchService extends ProcessService {
+  /// A map of all running services
+  static final allServices = <String, WatchService>{};
+
   /// The path to the tmp output file
   /// in which the events will be written
   final String scriptFilePath;
@@ -18,7 +21,19 @@ class WatchService extends ProcessService {
 
   /// Starts the watcher
   Future<void> record() async {
+    if (allServices[scriptFilePath]?.status == ProcessStatus.running) {
+      throw 'Another instance of the same script is already recording';
+    }
+
+    _onStart = () {
+      allServices[scriptFilePath] = this;
+      _log('Script \'$scriptFilePath\' started recording...');
+    };
+
     _onExit = (ProcessStatus status) async {
+      // allServices.remove(scriptFilePath);
+      _log('Script \'$scriptFilePath\' stopped recording with status $status');
+
       try {
         Script script = await loadScript(scriptFilePath);
         final tmpFile = File(tmpScriptFilePath);
@@ -33,10 +48,12 @@ class WatchService extends ProcessService {
           if (e != null) script.events.add(e);
         }
         await script.save();
+        notifyListeners(null);
       } catch (e) {
         showMsg('Error Saving Script: $e');
       }
     };
+
     await _start(
         'python', ['$pythonScriptsFolderPath/src/watch.py', tmpScriptFilePath]);
   }

@@ -60,8 +60,7 @@ extension StringExtensions on String {
       }
       return '';
     }).join('');
-    initials = initials.substring(0, math.min(2, initials.length));
-    return initials;
+    return initials.substring(0, math.min(2, initials.length));
   }
 
   String takeWords(int wordCount) {

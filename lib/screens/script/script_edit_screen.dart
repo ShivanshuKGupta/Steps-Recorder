@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../config.dart';
 import '../../globals.dart';
 import '../../models/events/event.dart';
 import '../../models/events/keyboard/keyboard_event.dart';
@@ -11,6 +12,7 @@ import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
 import '../../services/process_service.dart';
+import '../../widgets/play_script_button.dart';
 import 'keyboard_event_widget.dart';
 import 'mouse_event_widget.dart';
 
@@ -39,7 +41,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   void initState() {
     super.initState();
     script = widget.script;
-    script.file.watch().listen(_fileChangeHandler);
+    Directory(scriptsFolder).watch().listen(_fileChangeHandler);
     script.addListener(_listener);
     events.addAll(script.events);
   }
@@ -101,6 +103,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           ],
         ),
         actions: [
+          PlayScriptButton(script: script),
           ElevatedButton.icon(
             onPressed: () async {
               if (script.watchStatus == ProcessStatus.running) {
@@ -216,10 +219,14 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   }
 
   Future<void> _fileChangeHandler(FileSystemEvent event) async {
-    script = await loadScript(script.file.absolute.path);
-    setState(() {
-      events.clear();
-      events.addAll(script.events);
-    });
+    final eventPath = event.path.replaceAll('\\', '/');
+    final scriptPath = script.file.path.replaceAll('\\', '/');
+    if (eventPath == scriptPath) {
+      script = await loadScript(script.file.absolute.path);
+      setState(() {
+        events.clear();
+        events.addAll(script.events);
+      });
+    }
   }
 }

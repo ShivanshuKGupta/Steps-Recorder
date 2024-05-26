@@ -16,7 +16,7 @@ class ExecuteService extends ProcessService {
   @override
   void _log(dynamic msg) => dev.log(msg.toString(), name: 'Execute Service');
 
-  /// Starts the script and adds it to the [allServices] map
+  /// Starts the script
   Future<void> play() async {
     if (!await File(scriptFilePath).exists()) {
       throw 'Script file \'$scriptFilePath\' does not exist';
@@ -36,7 +36,7 @@ class ExecuteService extends ProcessService {
     };
 
     _onExit = (status) {
-      allServices.remove(scriptFilePath);
+      // allServices.remove(scriptFilePath);
       _log('Script \'$scriptFilePath\' exited with status $status');
     };
 

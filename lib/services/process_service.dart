@@ -49,20 +49,34 @@ abstract class ProcessService {
       throw 'This process is already running';
     }
 
+    _log('Starting...');
     _process = await Process.start(command, arguments);
+    _log('Process started');
 
     _status = ProcessStatus.running;
-    _onStart?.call();
+    try {
+      _onStart?.call();
+    } catch (e) {
+      _log('Error calling onStart: $e');
+    }
     notifyListeners(null);
 
     _process?.exitCode.then((exitCode) {
       if (_status == ProcessStatus.running) {
-        _status = ProcessStatus.aborted;
+        if (exitCode != 0) {
+          _status = ProcessStatus.aborted;
+        } else {
+          _status = ProcessStatus.stopped;
+        }
       }
 
       _log('Process exited with code $exitCode');
       _process = null;
-      _onExit?.call(_status);
+      try {
+        _onExit?.call(_status);
+      } catch (e) {
+        _log('Error calling onExit: $e');
+      }
       notifyListeners(null);
     });
 
@@ -87,20 +101,29 @@ abstract class ProcessService {
   /// Adds a listener to the process
   /// which is called when the process has output
   /// or changes its [_status]
-  void addListener(
-          void Function(ProcessStatus status, String? data) listener) =>
-      _listeners.add(listener);
+  void addListener(void Function(ProcessStatus status, String? data) listener) {
+    _log('Adding listener: ${listener.hashCode}');
+    _listeners.add(listener);
+  }
 
   /// Removes a listener from the process
   bool removeListener(
-          void Function(ProcessStatus status, String? data) listener) =>
-      _listeners.remove(listener);
+      void Function(ProcessStatus status, String? data) listener) {
+    _log('Removing listener: ${listener.hashCode}');
+    return _listeners.remove(listener);
+  }
 
   /// Notifies all listeners about the process's output
   /// or [_status]
   void notifyListeners(String? data) {
+    _log('Notifying ${_listeners.length} listeners');
     for (final listener in _listeners) {
-      listener(_status, data);
+      try {
+        _log('Calling listener: ${listener.hashCode}');
+        listener(_status, data);
+      } catch (e) {
+        _log('Error calling listener: $e');
+      }
     }
   }
 }

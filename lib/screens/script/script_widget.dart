@@ -4,6 +4,7 @@ import '../../globals.dart';
 import '../../models/events/script/script.dart';
 import '../../models/extensions/datetime_extension.dart';
 import '../../utils/widgets/loading_icon_button.dart';
+import '../../widgets/play_script_button.dart';
 import 'script_edit_screen.dart';
 
 class ScriptWidget extends StatelessWidget {
@@ -84,15 +85,7 @@ class ScriptWidget extends StatelessWidget {
                       color: Colors.blue,
                     ),
                   ),
-                  LoadingIconButton(
-                    onPressed: () async {
-                      await script.play();
-                    },
-                    icon: const Icon(
-                      Icons.play_arrow_rounded,
-                      color: Colors.green,
-                    ),
-                  ),
+                  PlayScriptButton(script: script),
                 ],
               ),
             ),
