@@ -27,6 +27,7 @@ class ScriptEditScreen extends StatefulWidget {
 class _ScriptEditScreenState extends State<ScriptEditScreen> {
   late Script script;
   final events = <Event>[];
+  bool disposed = false;
 
   final allTypeOfEvents = <Event>[
     KeyboardEvent(state: KeyboardButtonState.press, key: 'a'),
@@ -50,6 +51,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
 
   @override
   void dispose() {
+    disposed = true;
     script.events = events;
     folderChangedStream.listen(null);
     script.removeListener(_listener);
@@ -131,47 +133,48 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
       body: ReorderableListView(
         footer: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Center(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      textStyle: textTheme.titleMedium,
-                    ),
-                    icon: const Icon(Icons.keyboard_alt_rounded),
-                    onPressed: () {
-                      final event = KeyboardEvent(
-                        state: KeyboardButtonState.press,
-                        key: 'a',
-                      );
-                      setState(() {
-                        events.add(event);
-                      });
-                    },
-                    label: Text('+', style: textTheme.titleMedium),
+          child: SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              alignment: WrapAlignment.spaceAround,
+              children: [
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: colorScheme.onPrimary,
                   ),
+                  icon: const Icon(Icons.keyboard_alt_rounded),
+                  onPressed: () {
+                    final event = KeyboardEvent(
+                      state: KeyboardButtonState.press,
+                      key: 'a',
+                    );
+                    setState(() {
+                      events.add(event);
+                    });
+                  },
+                  label: const Text('Add a Keyboard Event'),
                 ),
-              ),
-              Expanded(
-                child: Center(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.mouse_rounded),
-                    onPressed: () {
-                      final event = MouseEvent(
-                        x: 0,
-                        y: 0,
-                        mouseEventType: MouseEventType.press,
-                      );
-                      setState(() {
-                        events.add(event);
-                      });
-                    },
-                    label: const Text('+'),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: colorScheme.onPrimary,
                   ),
+                  icon: const Icon(Icons.mouse_rounded),
+                  onPressed: () {
+                    final event = MouseEvent(
+                      x: 0,
+                      y: 0,
+                      mouseEventType: MouseEventType.press,
+                    );
+                    setState(() {
+                      events.add(event);
+                    });
+                  },
+                  label: const Text('Add a Mouse Event'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         children: [
@@ -221,6 +224,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   }
 
   Future<void> _fileChangeHandler(FileSystemEvent event) async {
+    if (disposed) return;
     final eventPath = event.path.replaceAll('\\', '/');
     final scriptPath = script.file.path.replaceAll('\\', '/');
     if (eventPath == scriptPath) {

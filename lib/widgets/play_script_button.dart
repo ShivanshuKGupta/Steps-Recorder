@@ -63,10 +63,10 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
     if (lastStatus == status) return;
     if (status == ProcessStatus.running) {
       log('Minimizing', name: 'PlayScriptButton');
-      await WindowManager.instance.minimize();
+      await windowManager.minimize();
     } else {
       log('Restoring', name: 'PlayScriptButton');
-      await WindowManager.instance.restore();
+      await windowManager.restore();
     }
     lastStatus = status;
   }

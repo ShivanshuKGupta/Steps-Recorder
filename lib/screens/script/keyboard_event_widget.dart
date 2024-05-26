@@ -23,6 +23,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.2),
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).dividerColor,
@@ -31,10 +32,14 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 16),
-        leading: const Icon(Icons.keyboard_alt_rounded),
+        leading: const Icon(
+          Icons.keyboard_alt_rounded,
+          color: Colors.blue,
+        ),
         title: Row(
           children: [
-            Expanded(
+            SizedBox(
+              width: 100,
               child: DropdownButtonFormField(
                 items: KeyboardButtonState.values
                     .map(
@@ -56,7 +61,8 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                 },
               ),
             ),
-            Expanded(
+            SizedBox(
+              width: 150,
               child: DropdownButtonFormField<String>(
                 items: ['special', 'key']
                     .map(

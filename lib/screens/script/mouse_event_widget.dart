@@ -20,6 +20,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.purple.withOpacity(0.2),
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).dividerColor,
@@ -28,10 +29,14 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 16),
-        leading: const Icon(Icons.mouse_rounded),
+        leading: const Icon(
+          Icons.mouse_rounded,
+          color: Colors.purple,
+        ),
         title: Row(
           children: [
-            Expanded(
+            SizedBox(
+              width: 100,
               child: DropdownButtonFormField(
                 items: MouseEventType.values
                     .map(
