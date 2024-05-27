@@ -9,6 +9,8 @@ class LoadingIconButton extends StatefulWidget {
   final bool enabled;
   final bool? loading;
   final void Function(dynamic err)? errorHandler;
+  final String? tooltip;
+
   const LoadingIconButton({
     required this.icon,
     required this.onPressed,
@@ -17,6 +19,7 @@ class LoadingIconButton extends StatefulWidget {
     this.enabled = true,
     this.errorHandler,
     this.loading,
+    this.tooltip,
   });
 
   @override
@@ -30,6 +33,7 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
   Widget build(BuildContext context) {
     _loading = widget.loading ?? _loading;
     return IconButton(
+      tooltip: widget.tooltip,
       style: widget.style,
       onPressed: _loading || !widget.enabled || widget.onPressed == null
           ? null

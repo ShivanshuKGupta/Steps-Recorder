@@ -64,13 +64,18 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
             ? 'Stop Recording'
             : 'Record',
       ),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: widget.script.watchStatus == ProcessStatus.running
+            ? Colors.red
+            : Colors.green,
+      ),
       icon: Icon(
         widget.script.watchStatus == ProcessStatus.running
             ? Icons.stop
             : Icons.fiber_manual_record,
         color: widget.script.watchStatus == ProcessStatus.running
             ? Colors.red
-            : Colors.blue,
+            : Colors.green,
       ),
       onPressed: () async {
         if (widget.script.watchStatus == ProcessStatus.running) {

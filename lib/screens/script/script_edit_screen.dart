@@ -6,16 +6,21 @@ import 'package:flutter/material.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
+import '../../models/event_collections/event_collection_functions.dart';
+import '../../models/event_collections/keyboard_type_collection.dart';
+import '../../models/event_collections/mouse_move_collection.dart';
 import '../../models/events/custom/custom_event.dart';
-import '../../models/events/event.dart';
 import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
+import '../../utils/widgets/loading_icon_button.dart';
 import '../../widgets/record_script_button.dart';
-import 'custom_event_widget.dart';
-import 'keyboard_event_widget.dart';
-import 'mouse_event_widget.dart';
+import 'event_widgets/custom_event_widget.dart';
+import 'event_widgets/keyboard_event_widget.dart';
+import 'event_widgets/keyboard_type_collection_widget.dart';
+import 'event_widgets/mouse_collection_widget.dart';
+import 'event_widgets/mouse_event_widget.dart';
 
 class ScriptEditScreen extends StatefulWidget {
   final Script script;
@@ -27,34 +32,20 @@ class ScriptEditScreen extends StatefulWidget {
 
 class _ScriptEditScreenState extends State<ScriptEditScreen> {
   late Script script;
-  final events = <Event>[];
   bool disposed = false;
-
-  final allTypeOfEvents = <Event>[
-    KeyboardEvent(state: KeyboardButtonState.press, key: 'a'),
-    KeyboardEvent(state: KeyboardButtonState.release, key: 'a'),
-    MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.move),
-    MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.press),
-    MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.release),
-    MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.scroll),
-    CustomEvent(command: CustomCommand.restart),
-    CustomEvent(command: CustomCommand.delay, delay: 0.1),
-  ];
-
   final folderChangedStream = Directory(scriptsFolder).watch();
 
   @override
   void initState() {
     super.initState();
     script = widget.script;
+    script.events = reduceEvents(script.events);
     folderChangedStream.listen(_fileChangeHandler);
-    events.addAll(script.events);
   }
 
   @override
   void dispose() {
     disposed = true;
-    script.events = events;
     folderChangedStream.listen(null);
     unawaited(script.save().onError(
           (error, stackTrace) => showMsg('Error Saving Script: $error'),
@@ -111,7 +102,24 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              RecordScriptButton(script: script),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LoadingIconButton(
+                      tooltip: 'Save Script',
+                      icon: const Icon(
+                        Icons.save_rounded,
+                        color: Colors.blue,
+                      ),
+                      onPressed: () async {
+                        await script.save();
+                        setState(() {
+                          script.events = reduceEvents(script.events);
+                        });
+                      }),
+                  RecordScriptButton(script: script),
+                ],
+              ),
               Text(
                 'Press esc to stop the recording  ',
                 style: textTheme.bodySmall!.copyWith(
@@ -143,7 +151,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                       key: 'a',
                     );
                     setState(() {
-                      events.add(event);
+                      script.events.add(event);
                     });
                   },
                   label: const Text('Add a Keyboard Event'),
@@ -161,7 +169,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                       mouseEventType: MouseEventType.press,
                     );
                     setState(() {
-                      events.add(event);
+                      script.events.add(event);
                     });
                   },
                   label: const Text('Add a Mouse Event'),
@@ -177,7 +185,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                       command: CustomCommand.restart,
                     );
                     setState(() {
-                      events.add(event);
+                      script.events.add(event);
                     });
                   },
                   label: const Text('Add a Custom Event'),
@@ -187,7 +195,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           ),
         ),
         children: [
-          for (final event in events)
+          for (final event in script.events)
             Row(
               key: ValueKey(event.toJson()),
               children: [
@@ -202,14 +210,20 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                     const (CustomEvent) => CustomEventWidget(
                         event: event as CustomEvent,
                       ),
+                    const (KeyboardTypeCollection) =>
+                      KeyboardTypeCollectionWidget(
+                          collection: event as KeyboardTypeCollection),
+                    const (MouseEventCollection) => MouseCollectionWidget(
+                        collection: event as MouseEventCollection),
                     _ => const Text('Unknown Event Type')
                   },
                 ),
                 IconButton(
+                  tooltip: 'Delete Event',
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
                     setState(() {
-                      events.remove(event);
+                      script.events.remove(event);
                     });
                   },
                 ),
@@ -223,8 +237,8 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final item = events.removeAt(oldIndex);
-            events.insert(newIndex, item);
+            final item = script.events.removeAt(oldIndex);
+            script.events.insert(newIndex, item);
           });
         },
       ),
@@ -238,8 +252,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     if (eventPath == scriptPath) {
       script = await loadScript(script.file.absolute.path);
       setState(() {
-        events.clear();
-        events.addAll(script.events);
+        script.events = reduceEvents(script.events);
       });
     }
   }

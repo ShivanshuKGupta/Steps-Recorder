@@ -59,6 +59,9 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   @override
   Widget build(BuildContext context) {
     return LoadingIconButton(
+      tooltip: widget.script.executeStatus == ProcessStatus.running
+          ? 'Stop Script'
+          : 'Play Script',
       icon: Icon(
         widget.script.executeStatus == ProcessStatus.running
             ? Icons.stop

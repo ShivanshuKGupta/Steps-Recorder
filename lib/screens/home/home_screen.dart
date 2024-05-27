@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           actions: [
             IconButton(
+              tooltip: 'Settings',
               icon: const Icon(Icons.settings_rounded),
               onPressed: () async {
                 showMsg('Settings not implemented yet');
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
         floatingActionButton: FloatingActionButton(
+          tooltip: 'Add Script',
           child: const Icon(Icons.add_rounded),
           onPressed: () async {
             int i = 1;

@@ -64,6 +64,7 @@ class ScriptWidget extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.end,
                 children: [
                   LoadingIconButton(
+                    tooltip: 'Delete Script',
                     onPressed: () async {
                       await script.delete();
                     },
@@ -73,6 +74,7 @@ class ScriptWidget extends StatelessWidget {
                     ),
                   ),
                   LoadingIconButton(
+                    tooltip: 'Edit Script',
                     onPressed: () async {
                       Navigator.of(context).push(
                         MaterialPageRoute(

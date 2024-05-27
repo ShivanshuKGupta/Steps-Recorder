@@ -10,6 +10,7 @@ void main() async {
   await windowManager.waitUntilReadyToShow(
     const WindowOptions(
       size: Size(800, 600),
+      minimumSize: Size(600, 400),
       center: true,
     ),
     () async {

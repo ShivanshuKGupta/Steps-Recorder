@@ -3,7 +3,11 @@ import 'dart:io';
 
 import '../../../config.dart';
 import '../../../services/process_service.dart';
+import '../../event_collections/event_collection.dart';
+import '../custom/custom_event.dart';
 import '../event.dart';
+import '../keyboard/keyboard_event.dart';
+import '../mouse/mouse_event.dart';
 
 part 'script_functions.dart';
 
@@ -52,10 +56,22 @@ class Script {
   });
 
   Map<String, dynamic> toJson() {
+    final List<Event> convertedEvents = [];
+    for (final event in events) {
+      if (event is KeyboardEvent ||
+          event is MouseEvent ||
+          event is CustomEvent) {
+        convertedEvents.add(event);
+      } else if (event is EventCollection) {
+        convertedEvents.addAll(event.buildEvents());
+      } else {
+        throw 'Event type not supported to be converted in json: ${event.runtimeType}';
+      }
+    }
     return {
       'title': title,
       'description': description,
-      'events': events.map((e) => e.toJson()).toList(),
+      'events': convertedEvents,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
