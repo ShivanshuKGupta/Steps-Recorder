@@ -57,6 +57,8 @@ except Exception as e:
 while True:
     try:
         input_str = input("")
+        if input_str == "exit":
+            break
         json_obj = json.loads(input_str)
         event = Event.parse(json_obj)
         # print(f"{event=}")

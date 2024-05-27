@@ -83,13 +83,13 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
     );
   }
 
-  Future<void> _onScriptEvent(ProcessStatus status, String? data) async {
+  Future<void> _onScriptEvent(ProcessStatus _, String? data) async {
     setState(() {
       if (data != null) showMsg(data);
     });
-    if (lastStatus == status) return;
-    if (status == ProcessStatus.running) {
-      showMsg('Script started recording...');
+    if (lastStatus == widget.script.watchStatus) return;
+    if (widget.script.watchStatus == ProcessStatus.running) {
+      showMsg('Script started executing...');
       if (kDebugMode) {
         await windowManager.minimize();
       }
@@ -98,7 +98,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
       await windowManager.restore();
       await windowManager.show();
     }
-    lastStatus = status;
+    lastStatus = widget.script.watchStatus;
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {

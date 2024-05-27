@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../models/events/event.dart';
+import '../models/events/keyboard/keyboard_event.dart';
+import '../models/events/keyboard/special_keys.dart';
 import '../models/events/script/script.dart';
 import '../services/notification_service.dart';
 import '../services/process_service.dart';
@@ -18,16 +23,36 @@ class PlayScriptButton extends StatefulWidget {
 
 class _PlayScriptButtonState extends State<PlayScriptButton> {
   late ProcessStatus lastStatus = widget.script.executeStatus;
+  final WatchService _keyboardWatcher = WatchService(
+    scriptFilePath: null,
+    keyboardOnlyMode: true,
+  );
 
   @override
   void initState() {
     super.initState();
     widget.script.addListener(_onScriptEvent);
+    _keyboardWatcher.addListener(_onKeyboardEvent);
+    unawaited(_keyboardWatcher
+        .record()
+        .then(
+          (_) => log('Keyboard watcher started', name: 'RecordScriptButton'),
+        )
+        .onError(
+          (error, stackTrace) => log(
+            'Error starting keyboard watcher: $error',
+            name: 'RecordScriptButton',
+            error: error,
+            stackTrace: stackTrace,
+          ),
+        ));
   }
 
   @override
   void dispose() {
     widget.script.removeListener(_onScriptEvent);
+    _keyboardWatcher.stopRecording();
+    _keyboardWatcher.removeListener(_onKeyboardEvent);
     super.dispose();
   }
 
@@ -52,12 +77,12 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
     );
   }
 
-  Future<void> _onScriptEvent(ProcessStatus status, String? data) async {
+  Future<void> _onScriptEvent(ProcessStatus _, String? data) async {
     setState(() {
       if (data != null) showMsg(data);
     });
-    if (lastStatus == status) return;
-    if (status == ProcessStatus.running) {
+    if (lastStatus == widget.script.executeStatus) return;
+    if (widget.script.executeStatus == ProcessStatus.running) {
       log('Minimizing', name: 'PlayScriptButton');
       await windowManager.minimize();
       // await windowManager.hide();
@@ -66,6 +91,23 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
       await windowManager.restore();
       await windowManager.show();
     }
-    lastStatus = status;
+    lastStatus = widget.script.executeStatus;
+  }
+
+  void _onKeyboardEvent(ProcessStatus status, String? data) {
+    if (data == null) return;
+    final List<Event?> events = data.split('\n').map((e) {
+      if (e.isEmpty) return null;
+      final Map<String, dynamic> data = json.decode(e.trim());
+      return Event.parse(data);
+    }).toList();
+    for (final event in events) {
+      if (event is KeyboardEvent &&
+          event.specialKey == SpecialKey.esc &&
+          widget.script.executeStatus == ProcessStatus.running) {
+        log('Stopping execution', name: 'RecordScriptButton');
+        widget.script.stop();
+      }
+    }
   }
 }
