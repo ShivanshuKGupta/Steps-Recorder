@@ -70,6 +70,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     prefixText: 'X: ',
+                    contentPadding: EdgeInsets.only(top: 8),
                     alignLabelWithHint: true,
                     counter: SizedBox(),
                     isDense: true,
@@ -92,6 +93,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     prefixText: 'Y: ',
+                    contentPadding: EdgeInsets.only(top: 8),
                     alignLabelWithHint: true,
                     counter: SizedBox(),
                     isDense: true,

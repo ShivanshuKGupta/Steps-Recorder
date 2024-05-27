@@ -95,6 +95,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {
+    log('Received keyboard event: $data', name: 'PlayScriptButton');
     if (data == null) return;
     final List<Event?> events = data.split('\n').map((e) {
       if (e.isEmpty) return null;

@@ -10,6 +10,7 @@ class Event:
 
     @staticmethod
     def parse(json: dict) -> "Event":
+        from .custom_event import CustomEvent
         from .keyboard_event import KeyboardEvent
         from .mouse_event import MouseEvent
 
@@ -17,10 +18,12 @@ class Event:
         switch = {
             "mouse": MouseEvent,
             "keyboard": KeyboardEvent,
+            "custom": CustomEvent,
         }
         return switch[type].fromJson(json)
 
     def __str__(self):
+        from .custom_event import CustomEvent
         from .keyboard_event import KeyboardEvent
         from .mouse_event import MouseEvent
 
@@ -32,5 +35,7 @@ class Event:
             )
         elif type(self) is KeyboardEvent:
             return str(KeyboardEvent(self.state, self.key, self.specialKey))
+        elif type(self) is CustomEvent:
+            return str(CustomEvent(self.customCommand, self.delay))
         else:
             return f"Unknown event type: {self}"

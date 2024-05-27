@@ -2,6 +2,7 @@ import json
 import sys
 from time import sleep
 
+from models.custom_event import *
 from models.event import Event
 from models.keyboard_event import *
 from models.mouse_event import *
@@ -42,6 +43,15 @@ def handle_mouse_event(event: MouseEvent):
         mouseController.scroll(event.dx, event.dy)
 
 
+def handle_custom_event(event: CustomEvent):
+    if event.customCommand == CustomCommand.restart:
+        sys.stdin = open(input_file, "r")
+    elif event.customCommand == CustomCommand.delay:
+        sleep(event.delay if event.delay is not None else 0)
+    else:
+        raise Exception(f"Unknown custom command: {event.customCommand}")
+
+
 if len(sys.argv) < 2:
     print("Usage: python3 watch.py <output_file>")
     sys.exit(1)
@@ -65,6 +75,8 @@ while True:
             handle_keyboard_event(event)
         elif type(event) is MouseEvent:
             handle_mouse_event(event)
+        elif type(event) is CustomEvent:
+            handle_custom_event(event)
         else:
             raise Exception(f"Unknown event type: {event}")
     except EOFError:

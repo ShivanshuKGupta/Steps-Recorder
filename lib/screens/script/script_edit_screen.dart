@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
+import '../../models/events/custom/custom_event.dart';
 import '../../models/events/event.dart';
 import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
 import '../../widgets/record_script_button.dart';
+import 'custom_event_widget.dart';
 import 'keyboard_event_widget.dart';
 import 'mouse_event_widget.dart';
 
@@ -35,6 +37,8 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.press),
     MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.release),
     MouseEvent(x: 0, y: 0, mouseEventType: MouseEventType.scroll),
+    CustomEvent(command: CustomCommand.restart),
+    CustomEvent(command: CustomCommand.delay, delay: 0.1),
   ];
 
   final folderChangedStream = Directory(scriptsFolder).watch();
@@ -104,17 +108,22 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           ],
         ),
         actions: [
-          RecordScriptButton(script: script),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RecordScriptButton(script: script),
+              Text(
+                'Press esc to stop the recording  ',
+                style: textTheme.bodySmall!.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ],
       ),
       body: ReorderableListView(
-        header: Text(
-          'Press esc to stop the recording',
-          style: textTheme.bodySmall!.copyWith(
-            fontStyle: FontStyle.italic,
-          ),
-          textAlign: TextAlign.center,
-        ),
         footer: Padding(
           padding: const EdgeInsets.all(10.0),
           child: SizedBox(
@@ -157,6 +166,22 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                   },
                   label: const Text('Add a Mouse Event'),
                 ),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent,
+                    foregroundColor: colorScheme.onPrimary,
+                  ),
+                  icon: const Icon(Icons.code_rounded),
+                  onPressed: () {
+                    final event = CustomEvent(
+                      command: CustomCommand.restart,
+                    );
+                    setState(() {
+                      events.add(event);
+                    });
+                  },
+                  label: const Text('Add a Custom Event'),
+                ),
               ],
             ),
           ),
@@ -173,6 +198,9 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                       ),
                     const (MouseEvent) => MouseEventWidget(
                         event: event as MouseEvent,
+                      ),
+                    const (CustomEvent) => CustomEventWidget(
+                        event: event as CustomEvent,
                       ),
                     _ => const Text('Unknown Event Type')
                   },

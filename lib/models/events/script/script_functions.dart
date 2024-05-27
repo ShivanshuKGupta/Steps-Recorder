@@ -33,7 +33,7 @@ extension ScriptFunctions on Script {
 
   /// Stops the script execution
   void stop() {
-    _executeService.stop();
+    _executeService.kill();
   }
 
   /// Records the script

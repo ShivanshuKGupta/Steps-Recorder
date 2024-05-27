@@ -48,12 +48,16 @@ class ExecuteService extends ProcessService {
   ///
   /// If the script doesn't stops within 500 milliseconds then
   /// it will be killed
-  void stop() {
-    _stop();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (status == ProcessStatus.running) {
-        _kill();
-      }
-    });
+  // void stop() {
+  //   _stop();
+  //   Future.delayed(const Duration(milliseconds: 500), () {
+  //     if (status == ProcessStatus.running) {
+  //       _kill();
+  //     }
+  //   });
+  // }
+
+  void kill() {
+    _kill();
   }
 }

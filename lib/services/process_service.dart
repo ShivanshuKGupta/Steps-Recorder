@@ -86,8 +86,7 @@ abstract class ProcessService {
   /// Stops the process
   void _stop() {
     _status = ProcessStatus.stopped;
-    // _process?.stdin.writeln('exit');
-    _kill();
+    _process?.stdin.writeln('exit');
   }
 
   /// Kills the process

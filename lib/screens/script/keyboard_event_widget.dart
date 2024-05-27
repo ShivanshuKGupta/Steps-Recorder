@@ -119,6 +119,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                       decoration: const InputDecoration(
                         alignLabelWithHint: true,
                         counter: SizedBox(),
+                        contentPadding: EdgeInsets.only(top: 8),
                         isDense: true,
                         enabledBorder: InputBorder.none,
                         prefixText: 'Key: ',

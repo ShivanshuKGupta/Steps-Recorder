@@ -1,3 +1,4 @@
+import 'custom/custom_event.dart';
 import 'keyboard/keyboard_event.dart';
 import 'mouse/mouse_event.dart';
 
@@ -21,6 +22,8 @@ class Event {
         return KeyboardEvent.fromJson(json);
       case MouseEvent.eventType:
         return MouseEvent.fromJson(json);
+      case CustomEvent.eventType:
+        return CustomEvent.fromJson(json);
       default:
         throw Exception('Unknown event type: $type');
     }
