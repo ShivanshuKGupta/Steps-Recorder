@@ -5,9 +5,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../config.dart';
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
-import '../models/events/keyboard/special_keys.dart';
 import '../models/events/script/script.dart';
 import '../services/notification_service.dart';
 import '../services/process_service.dart';
@@ -107,7 +107,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
     }).toList();
     for (final event in events) {
       if (event is KeyboardEvent &&
-          event.specialKey == SpecialKey.esc &&
+          event.specialKey == Config.endKey &&
           widget.script.executeStatus == ProcessStatus.running) {
         log('Stopping execution', name: 'RecordScriptButton');
         widget.script.stop();

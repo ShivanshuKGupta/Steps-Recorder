@@ -7,6 +7,7 @@ import '../../globals.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
 import '../script/script_widget.dart';
+import '../settings/settings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +54,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               tooltip: 'Settings',
               icon: const Icon(Icons.settings_rounded),
               onPressed: () async {
-                showMsg('Settings not implemented yet');
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
               },
             ),
           ],

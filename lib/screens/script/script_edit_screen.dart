@@ -121,7 +121,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                 ],
               ),
               Text(
-                'Press esc to stop the recording  ',
+                'Press ${Config.endKey.name} to stop the recording  ',
                 style: textTheme.bodySmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
