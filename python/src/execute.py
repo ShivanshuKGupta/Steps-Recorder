@@ -14,7 +14,7 @@ mouseController = pyn_mouse.Controller()
 
 def handle_keyboard_event(event: KeyboardEvent):
     key = (
-        pyn_keyboard.Key[event.specialKey]
+        pyn_keyboard.Key[event.specialKey.name]
         if event.specialKey is not None
         else event.key
     )
@@ -61,7 +61,6 @@ while True:
             break
         json_obj = json.loads(input_str)
         event = Event.parse(json_obj)
-        # print(f"{event=}")
         if type(event) is KeyboardEvent:
             handle_keyboard_event(event)
         elif type(event) is MouseEvent:

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -89,14 +88,12 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
     });
     if (lastStatus == widget.script.watchStatus) return;
     if (widget.script.watchStatus == ProcessStatus.running) {
-      showMsg('Script started executing...');
-      if (kDebugMode) {
-        await windowManager.minimize();
-      }
+      await windowManager.minimize();
     } else {
       showMsg('Recording saved: ${widget.script.scriptFilePath}');
       await windowManager.restore();
       await windowManager.show();
+      await windowManager.focus();
     }
     lastStatus = widget.script.watchStatus;
   }

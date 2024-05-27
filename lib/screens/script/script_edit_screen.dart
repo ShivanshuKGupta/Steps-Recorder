@@ -11,7 +11,6 @@ import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
-import '../../widgets/play_script_button.dart';
 import '../../widgets/record_script_button.dart';
 import 'keyboard_event_widget.dart';
 import 'mouse_event_widget.dart';
@@ -105,7 +104,6 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           ],
         ),
         actions: [
-          PlayScriptButton(script: script),
           RecordScriptButton(script: script),
         ],
       ),
