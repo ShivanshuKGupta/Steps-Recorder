@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
@@ -12,8 +11,8 @@ import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
 import '../../models/events/script/script.dart';
 import '../../services/notification_service.dart';
-import '../../services/process_service.dart';
 import '../../widgets/play_script_button.dart';
+import '../../widgets/record_script_button.dart';
 import 'keyboard_event_widget.dart';
 import 'mouse_event_widget.dart';
 
@@ -27,7 +26,6 @@ class ScriptEditScreen extends StatefulWidget {
 
 class _ScriptEditScreenState extends State<ScriptEditScreen> {
   late Script script;
-  late ProcessStatus lastStatus = widget.script.executeStatus;
   final events = <Event>[];
   bool disposed = false;
 
@@ -47,7 +45,6 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     super.initState();
     script = widget.script;
     folderChangedStream.listen(_fileChangeHandler);
-    script.addListener(_onScriptEvent);
     events.addAll(script.events);
   }
 
@@ -56,7 +53,6 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     disposed = true;
     script.events = events;
     folderChangedStream.listen(null);
-    script.removeListener(_onScriptEvent);
     unawaited(script.save().onError(
           (error, stackTrace) => showMsg('Error Saving Script: $error'),
         ));
@@ -110,31 +106,12 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
         ),
         actions: [
           PlayScriptButton(script: script),
-          ElevatedButton.icon(
-            onPressed: () async {
-              if (script.watchStatus == ProcessStatus.running) {
-                script.stopRecording();
-              } else {
-                await script.record();
-              }
-            },
-            label: Text(script.watchStatus == ProcessStatus.running
-                ? 'Stop'
-                : 'Record'),
-            icon: Icon(
-              script.watchStatus == ProcessStatus.running
-                  ? Icons.stop_rounded
-                  : Icons.fiber_manual_record,
-              color: script.watchStatus == ProcessStatus.running
-                  ? Colors.red
-                  : null,
-            ),
-          ),
+          RecordScriptButton(script: script),
         ],
       ),
       body: ReorderableListView(
         header: Text(
-          'You can press right alt to stop the recording',
+          'Press esc to stop the recording',
           style: textTheme.bodySmall!.copyWith(
             fontStyle: FontStyle.italic,
           ),
@@ -226,22 +203,6 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
         },
       ),
     );
-  }
-
-  void _onScriptEvent(ProcessStatus status, String? data) {
-    setState(() {
-      if (data != null) showMsg(data);
-    });
-    if (lastStatus == status) return;
-    if (status == ProcessStatus.running) {
-      log('Minimizing', name: 'RecordScriptButton');
-      unawaited(windowManager.minimize());
-      // await windowManager.hide();
-    } else {
-      log('Restoring', name: 'RecordScriptButton');
-      unawaited(windowManager.restore());
-      unawaited(windowManager.show());
-    }
   }
 
   Future<void> _fileChangeHandler(FileSystemEvent event) async {

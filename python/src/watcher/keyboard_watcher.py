@@ -17,7 +17,7 @@ def __on_press(key: keyboard.Key | keyboard.KeyCode | None) -> None:
     if key == __last_key:
         return
     __last_key = key
-    event = KeyboardEvent(state=KeyboardButtonState.press, key="a")
+    event = KeyboardEvent(state=KeyboardButtonState.press)
     try:
         if type(key) == keyboard.KeyCode:
             event.key = f"{key.char}"
@@ -26,6 +26,7 @@ def __on_press(key: keyboard.Key | keyboard.KeyCode | None) -> None:
     except AttributeError:
         event.specialKey = SpecialKey[str(key).split(".")[-1]]
     print(json.dumps(event.toJson()))
+    sys.stdout.flush()
 
 
 def __on_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
@@ -40,6 +41,7 @@ def __on_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
     except AttributeError:
         event.specialKey = SpecialKey[str(key).split(".")[-1]]
     print(json.dumps(event.toJson()))
+    sys.stdout.flush()
 
 
 def get_keyboard_watcher():

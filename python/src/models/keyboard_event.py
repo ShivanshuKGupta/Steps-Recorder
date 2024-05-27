@@ -18,11 +18,11 @@ class KeyboardEvent(Event):
         key: str | None = None,
         specialKey: SpecialKey | None = None,
     ):
-        if not ((key != None) ^ (specialKey != None)):
-            raise ValueError(
-                "Either key or specialKey must be set and the other must be None"
-                "\nkey: " + str(key) + " specialKey: " + str(specialKey)
-            )
+        # if not ((key != None) ^ (specialKey != None)):
+        #     raise ValueError(
+        #         "Either key or specialKey must be set and the other must be None"
+        #         "\nkey: " + str(key) + " specialKey: " + str(specialKey)
+        #     )
         super().__init__(KeyboardEvent.eventType)
         self.key = key
         self.state = state
