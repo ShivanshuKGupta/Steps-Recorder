@@ -8,8 +8,8 @@ from models.mouse_event import *
 from pynput import keyboard as pyn_keyboard  # Controller, Key
 from pynput import mouse as pyn_mouse  # Button, Controller
 
-keyboard = pyn_keyboard.Controller()
-mouse = pyn_mouse.Controller()
+keyboardController = pyn_keyboard.Controller()
+mouseController = pyn_mouse.Controller()
 
 
 def handle_keyboard_event(event: KeyboardEvent):
@@ -21,25 +21,25 @@ def handle_keyboard_event(event: KeyboardEvent):
     if key == pyn_keyboard.Key.space:
         key = " "
     if event.state == KeyboardButtonState.press:
-        keyboard.press(key)
+        keyboardController.press(key)
     else:
-        keyboard.release(key)
+        keyboardController.release(key)
 
 
 def handle_mouse_event(event: MouseEvent):
     sleep(0.01)
     if event.mouseEventType == MouseEventType.move:
-        mouse.position = (event.x, event.y)
+        mouseController.position = (event.x, event.y)
     elif event.mouseEventType == MouseEventType.press:
-        mouse.position = (event.x, event.y)
+        mouseController.position = (event.x, event.y)
         button = pyn_mouse.Button[event.button.name]
-        mouse.press(button)
+        mouseController.press(button)
     elif event.mouseEventType == MouseEventType.release:
-        mouse.position = (event.x, event.y)
+        mouseController.position = (event.x, event.y)
         button = pyn_mouse.Button[event.button.name]
-        mouse.release(button)
+        mouseController.release(button)
     elif event.mouseEventType == MouseEventType.scroll:
-        mouse.scroll(event.dx, event.dy)
+        mouseController.scroll(event.dx, event.dy)
 
 
 if len(sys.argv) < 2:

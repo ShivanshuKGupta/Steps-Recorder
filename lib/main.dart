@@ -7,15 +7,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await WindowManager.instance.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(800, 600),
-    center: true,
+  await windowManager.waitUntilReadyToShow(
+    const WindowOptions(
+      size: Size(800, 600),
+      center: true,
+    ),
+    () async {
+      await windowManager.show();
+      await windowManager.focus();
+    },
   );
-
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
 
   runApp(const App());
 }

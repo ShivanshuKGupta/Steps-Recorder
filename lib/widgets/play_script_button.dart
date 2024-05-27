@@ -22,13 +22,11 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   @override
   void initState() {
     super.initState();
-    log('Init ${_onScriptEvent.hashCode}', name: 'PlayScriptButton');
     widget.script.addListener(_onScriptEvent);
   }
 
   @override
   void dispose() {
-    log('Dispose ${_onScriptEvent.hashCode}', name: 'PlayScriptButton');
     widget.script.removeListener(_onScriptEvent);
     super.dispose();
   }
@@ -55,18 +53,18 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   }
 
   Future<void> _onScriptEvent(ProcessStatus status, String? data) async {
-    log('Script Event: $status, $data', name: 'PlayScriptButton');
     setState(() {
       if (data != null) showMsg(data);
     });
-    log('lastStatus: $lastStatus, status: $status', name: 'PlayScriptButton');
     if (lastStatus == status) return;
     if (status == ProcessStatus.running) {
       log('Minimizing', name: 'PlayScriptButton');
       await windowManager.minimize();
+      // await windowManager.hide();
     } else {
       log('Restoring', name: 'PlayScriptButton');
       await windowManager.restore();
+      await windowManager.show();
     }
     lastStatus = status;
   }

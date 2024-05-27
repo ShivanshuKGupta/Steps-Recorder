@@ -102,24 +102,20 @@ abstract class ProcessService {
   /// which is called when the process has output
   /// or changes its [_status]
   void addListener(void Function(ProcessStatus status, String? data) listener) {
-    _log('Adding listener: ${listener.hashCode}');
     _listeners.add(listener);
   }
 
   /// Removes a listener from the process
   bool removeListener(
       void Function(ProcessStatus status, String? data) listener) {
-    _log('Removing listener: ${listener.hashCode}');
     return _listeners.remove(listener);
   }
 
   /// Notifies all listeners about the process's output
   /// or [_status]
   void notifyListeners(String? data) {
-    _log('Notifying ${_listeners.length} listeners');
     for (final listener in _listeners) {
       try {
-        _log('Calling listener: ${listener.hashCode}');
         listener(_status, data);
       } catch (e) {
         _log('Error calling listener: $e');

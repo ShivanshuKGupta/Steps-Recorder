@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
@@ -26,6 +27,7 @@ class ScriptEditScreen extends StatefulWidget {
 
 class _ScriptEditScreenState extends State<ScriptEditScreen> {
   late Script script;
+  late ProcessStatus lastStatus = widget.script.executeStatus;
   final events = <Event>[];
   bool disposed = false;
 
@@ -45,7 +47,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     super.initState();
     script = widget.script;
     folderChangedStream.listen(_fileChangeHandler);
-    script.addListener(_listener);
+    script.addListener(_onScriptEvent);
     events.addAll(script.events);
   }
 
@@ -54,7 +56,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     disposed = true;
     script.events = events;
     folderChangedStream.listen(null);
-    script.removeListener(_listener);
+    script.removeListener(_onScriptEvent);
     unawaited(script.save().onError(
           (error, stackTrace) => showMsg('Error Saving Script: $error'),
         ));
@@ -131,6 +133,13 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
         ],
       ),
       body: ReorderableListView(
+        header: Text(
+          'You can press right alt to stop the recording',
+          style: textTheme.bodySmall!.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
+          textAlign: TextAlign.center,
+        ),
         footer: Padding(
           padding: const EdgeInsets.all(10.0),
           child: SizedBox(
@@ -219,8 +228,20 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
     );
   }
 
-  void _listener(ProcessStatus p1, String? p2) {
-    setState(() {});
+  void _onScriptEvent(ProcessStatus status, String? data) {
+    setState(() {
+      if (data != null) showMsg(data);
+    });
+    if (lastStatus == status) return;
+    if (status == ProcessStatus.running) {
+      log('Minimizing', name: 'RecordScriptButton');
+      unawaited(windowManager.minimize());
+      // await windowManager.hide();
+    } else {
+      log('Restoring', name: 'RecordScriptButton');
+      unawaited(windowManager.restore());
+      unawaited(windowManager.show());
+    }
   }
 
   Future<void> _fileChangeHandler(FileSystemEvent event) async {
