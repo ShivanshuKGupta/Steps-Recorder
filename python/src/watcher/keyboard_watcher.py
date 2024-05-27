@@ -20,7 +20,10 @@ def __on_press(key: keyboard.Key | keyboard.KeyCode | None) -> None:
     event = KeyboardEvent(state=KeyboardButtonState.press)
     try:
         if type(key) == keyboard.KeyCode:
-            event.key = f"{key.char}"
+            if (ord(str(key.char))) <= 31:
+                event.key = f"{chr(ord(str(key.char))+96)}"
+            else:
+                event.key = f"{key.char}"
         else:
             event.specialKey = SpecialKey[str(key).split(".")[-1]]
     except AttributeError:
@@ -32,10 +35,13 @@ def __on_press(key: keyboard.Key | keyboard.KeyCode | None) -> None:
 def __on_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
     global __last_key
     __last_key = None
-    event = KeyboardEvent(state=KeyboardButtonState.release, key="a")
+    event = KeyboardEvent(state=KeyboardButtonState.release)
     try:
         if type(key) == keyboard.KeyCode:
-            event.key = f"{key.char}"
+            if (ord(str(key.char))) <= 31:
+                event.key = f"{chr(ord(str(key.char))+96)}"
+            else:
+                event.key = f"{key.char}"
         else:
             event.specialKey = SpecialKey[str(key).split(".")[-1]]
     except AttributeError:

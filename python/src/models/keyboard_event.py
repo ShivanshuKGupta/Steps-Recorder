@@ -48,7 +48,7 @@ class KeyboardEvent(Event):
 
     @staticmethod
     def fromJson(json: dict) -> "KeyboardEvent":
-        event = KeyboardEvent(KeyboardButtonState.press, key="a")
+        event = KeyboardEvent(KeyboardButtonState.press)
         event.__load(json)
         return event
 
