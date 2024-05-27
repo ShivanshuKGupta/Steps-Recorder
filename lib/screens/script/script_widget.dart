@@ -47,7 +47,9 @@ class ScriptWidget extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  script.description ?? 'No description',
+                  script.description == null || script.description!.isEmpty
+                      ? 'No description'
+                      : script.description!,
                   style: const TextStyle(
                     color: Colors.grey,
                   ),
