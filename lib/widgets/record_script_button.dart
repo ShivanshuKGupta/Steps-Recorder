@@ -71,7 +71,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
             : Icons.fiber_manual_record,
         color: widget.script.watchStatus == ProcessStatus.running
             ? Colors.red
-            : Colors.green,
+            : Colors.blue,
       ),
       onPressed: () async {
         if (widget.script.watchStatus == ProcessStatus.running) {

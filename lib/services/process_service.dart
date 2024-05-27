@@ -97,10 +97,7 @@ abstract class ProcessService {
   }
 
   /// Handles the stdout of the process
-  void _stdout(String data) {
-    _log('stdout: $data');
-    notifyListeners(data);
-  }
+  void _stdout(String data) => notifyListeners(data);
 
   /// Adds a listener to the process
   /// which is called when the process has output
