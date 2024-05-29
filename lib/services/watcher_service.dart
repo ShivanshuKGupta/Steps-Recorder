@@ -90,6 +90,16 @@ class WatchService extends ProcessService {
       for (var e in events) {
         if (e != null) script.events.add(e);
       }
+
+      // Removing the last keyboard events, if they were created due to
+      // the end key being pressed
+      while (script.events.lastOrNull is KeyboardEvent) {
+        final lastEvent = script.events.last as KeyboardEvent;
+        if (lastEvent.specialKey == Config.endKey) {
+          script.events.removeLast();
+        }
+      }
+
       await script.save();
     } catch (e) {
       showMsg('Error Saving Script: $e');
