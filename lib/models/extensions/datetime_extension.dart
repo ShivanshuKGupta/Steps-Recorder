@@ -32,7 +32,7 @@ extension DatetimeExtension on DateTime {
   }
 
   String get time {
-    return '$hour:$minute';
+    return getTime();
   }
 
   String timeAgo() {
