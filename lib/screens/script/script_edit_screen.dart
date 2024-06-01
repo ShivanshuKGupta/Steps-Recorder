@@ -12,7 +12,7 @@ import '../../models/event_collections/mouse_move_collection.dart';
 import '../../models/events/custom/custom_event.dart';
 import '../../models/events/keyboard/keyboard_event.dart';
 import '../../models/events/mouse/mouse_event.dart';
-import '../../models/events/script/script.dart';
+import '../../models/script/script.dart';
 import '../../services/notification_service.dart';
 import '../../utils/widgets/loading_icon_button.dart';
 import '../../widgets/record_script_button.dart';

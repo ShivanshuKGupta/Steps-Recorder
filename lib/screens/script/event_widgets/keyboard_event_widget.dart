@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../globals.dart';
 import '../../../models/events/keyboard/keyboard_event.dart';
 import '../../../models/events/keyboard/special_keys.dart';
-import '../../../models/extensions/string_extension.dart';
+import '../../../utils/extensions/string_extension.dart';
 
 class KeyboardEventWidget extends StatefulWidget {
   final KeyboardEvent event;

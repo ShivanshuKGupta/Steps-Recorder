@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../globals.dart';
-import '../../models/events/script/script.dart';
-import '../../models/extensions/datetime_extension.dart';
+import '../../models/script/script.dart';
+import '../../utils/extensions/datetime_extension.dart';
 import '../../utils/widgets/loading_icon_button.dart';
 import '../../widgets/play_script_button.dart';
 import 'script_edit_screen.dart';

@@ -6,8 +6,8 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import '../../config.dart';
 import '../../globals.dart';
 import '../../models/events/keyboard/special_keys.dart';
-import '../../models/extensions/string_extension.dart';
 import '../../services/notification_service.dart';
+import '../../utils/extensions/string_extension.dart';
 import '../../utils/widgets/loading_elevated_button.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -82,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  Config.endKey = value ?? SpecialKey.values.first;
+                  Config.endKey = value ?? SpecialKey.esc;
                 });
               },
             ),
@@ -92,7 +92,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextEditingController(text: Config.startPlayingKeyShortcut),
             decoration: InputDecoration(
               hintText: 'Ctrl + Alt + p',
-              border: InputBorder.none,
               isDense: true,
               contentPadding: EdgeInsets.zero,
               hintStyle: textTheme.bodyLarge,
@@ -102,11 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Config.startPlayingKeyShortcut = value;
             },
             onEditingComplete: () async {
-              try {
-                Config.startPlayingKeyShortcut = Config.startPlayingKeyShortcut;
-              } catch (e) {
-                showMsg('Error Saving Script Title: $e');
-              }
+              setState(() {});
             },
           ),
           TextField(
@@ -114,7 +109,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextEditingController(text: Config.startRecordingKeyShortcut),
             decoration: InputDecoration(
               hintText: 'Ctrl + Alt + r',
-              border: InputBorder.none,
               isDense: true,
               contentPadding: EdgeInsets.zero,
               hintStyle: textTheme.bodyLarge,
@@ -124,12 +118,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Config.startRecordingKeyShortcut = value;
             },
             onEditingComplete: () async {
-              try {
-                Config.startRecordingKeyShortcut =
-                    Config.startRecordingKeyShortcut;
-              } catch (e) {
-                showMsg('Error Saving Script Title: $e');
+              setState(() {});
+            },
+          ),
+          TextField(
+            controller: TextEditingController(text: Config.port.toString()),
+            decoration: InputDecoration(
+              hintText: '4040',
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+              hintStyle: textTheme.bodyLarge,
+            ),
+            style: textTheme.titleLarge,
+            onChanged: (value) {
+              Config.port = int.tryParse(value) ?? Config.port;
+              if (Config.port < 1024 || Config.port > 65535) {
+                Config.port = 4040;
               }
+            },
+            onEditingComplete: () async {
+              setState(() {});
             },
           ),
         ],

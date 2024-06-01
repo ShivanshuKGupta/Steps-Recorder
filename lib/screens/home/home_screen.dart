@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
-import '../../models/events/script/script.dart';
+import '../../models/script/script.dart';
 import '../../services/notification_service.dart';
 import '../script/script_widget.dart';
 import '../settings/settings_screen.dart';
@@ -22,12 +23,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Directory(scriptsFolder).exists().then((value) async {
+    unawaited(Directory(scriptsFolder).exists().then((value) async {
       if (!value) {
         await Directory(scriptsFolder).create();
       }
       Directory(scriptsFolder).watch().listen(_fileChange);
-    });
+    }));
     _loadScripts();
   }
 
@@ -83,24 +84,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           tooltip: 'Add Script',
           child: const Icon(Icons.add_rounded),
           onPressed: () async {
-            int i = 1;
-            while (true) {
-              if (await File('$scriptsFolder/Script $i.json').exists()) {
-                i++;
-              } else {
-                break;
-              }
-            }
             try {
-              String title = 'Script $i';
-              await Script(
-                title: title,
-                events: [],
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              ).create();
+              await createNewScript();
             } catch (e) {
-              showMsg(e.toString());
+              showError('Error creating new script: $e');
             }
           },
         ));
@@ -111,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _loadScripts() {
-    loadAllScripts().then((value) => setState(() {
-          scripts = value;
+    unawaited(loadAllScripts().then((loadedScripts) => setState(() {
+          scripts = loadedScripts;
           scripts.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-        }));
+        })));
   }
 }

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../../config.dart';
-import '../../../services/process_service.dart';
-import '../../event_collections/event_collection.dart';
-import '../custom/custom_event.dart';
-import '../event.dart';
-import '../keyboard/keyboard_event.dart';
-import '../mouse/mouse_event.dart';
+import '../../config.dart';
+import '../../services/process_service.dart';
+import '../event_collections/event_collection.dart';
+import '../events/custom/custom_event.dart';
+import '../events/event.dart';
+import '../events/keyboard/keyboard_event.dart';
+import '../events/mouse/mouse_event.dart';
 
 part 'script_functions.dart';
 
@@ -71,7 +71,7 @@ class Script {
     return {
       'title': title,
       'description': description,
-      'events': convertedEvents,
+      'events': convertedEvents.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };

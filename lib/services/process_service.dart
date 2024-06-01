@@ -5,7 +5,7 @@ import 'dart:io';
 import '../config.dart';
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
-import '../models/events/script/script.dart';
+import '../models/script/script.dart';
 import 'notification_service.dart';
 
 part 'execute_service.dart';

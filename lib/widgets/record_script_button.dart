@@ -8,7 +8,7 @@ import 'package:window_manager/window_manager.dart';
 import '../config.dart';
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
-import '../models/events/script/script.dart';
+import '../models/script/script.dart';
 import '../services/notification_service.dart';
 import '../services/process_service.dart';
 import '../utils/widgets/loading_elevated_button.dart';

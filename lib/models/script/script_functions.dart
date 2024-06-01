@@ -116,3 +116,26 @@ Future<Script> loadScript(String scriptPath) async {
   final data = json.decode(await file.readAsString()) as Map<String, dynamic>;
   return Script.fromJson(data);
 }
+
+/// Creates a new script file in the scripts folder
+///
+/// The script file is named as 'Script $i.json' where i is the
+/// smallest number such that the file 'Script $i.json' does not exist
+/// in the scripts folder
+Future<void> createNewScript() async {
+  int i = 1;
+  while (true) {
+    if (await File('$scriptsFolder/Script $i.json').exists()) {
+      i++;
+    } else {
+      break;
+    }
+  }
+  String title = 'Script $i';
+  await Script(
+    title: title,
+    events: [],
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  ).create();
+}

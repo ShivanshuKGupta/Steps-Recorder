@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../globals.dart';
 import '../../../models/events/mouse/mouse_event.dart';
-import '../../../models/extensions/string_extension.dart';
+import '../../../utils/extensions/string_extension.dart';
 
 class MouseEventWidget extends StatefulWidget {
   final MouseEvent event;

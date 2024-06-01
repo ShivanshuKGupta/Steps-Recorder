@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../globals.dart';
 import '../../../models/events/custom/custom_event.dart';
-import '../../../models/extensions/string_extension.dart';
+import '../../../utils/extensions/string_extension.dart';
 
 class CustomEventWidget extends StatefulWidget {
   final CustomEvent event;

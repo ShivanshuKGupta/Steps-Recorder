@@ -3,14 +3,20 @@ import 'package:window_manager/window_manager.dart';
 
 import 'app.dart';
 import 'config.dart';
+import 'handlers/arguments_handler.dart';
 
-void main() async {
-  await Config.loadFromFile();
+void main(List<String> arguments) async {
+  if (await handleArguments(arguments)) return;
+
   WidgetsFlutterBinding.ensureInitialized();
+  await Config.loadFromFile();
   await WindowManager.instance.ensureInitialized();
 
   await windowManager.waitUntilReadyToShow(
-    const WindowOptions(minimumSize: Size(600, 400)),
+    const WindowOptions(
+      minimumSize: Size(600, 400),
+      size: Size(800, 600),
+    ),
     () async {
       await windowManager.show();
       await windowManager.focus();
