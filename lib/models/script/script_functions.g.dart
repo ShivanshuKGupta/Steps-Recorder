@@ -20,8 +20,8 @@ extension ScriptFunctions on Script {
   }
 
   /// Deletes the script file
-  Future<void> delete() async {
-    await scriptFile.delete();
+  void delete() {
+    scriptFile.deleteSync();
   }
 
   /// Executes the script

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../globals.dart';
 import '../../models/script/script.dart';
+import '../../services/notification_service.dart';
 import '../../utils/extensions/datetime_extension.dart';
 import '../../utils/widgets/loading_icon_button.dart';
 import '../../widgets/play_script_button.dart';
@@ -21,86 +22,89 @@ class ScriptWidget extends StatelessWidget {
         colorsForScripts[script.createdAt.hashCode % colorsForScripts.length];
 
     return Card(
+      key: ValueKey(script.createdAt),
       elevation: 10,
       color: color,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: ListTile(
+        contentPadding:
+            const EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 10),
+        onTap: _edit,
+        title: RichText(
+          text: TextSpan(
+            text: script.title,
+            style: textTheme.titleLarge!.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            children: [
+              TextSpan(
+                text: '   ${script.updatedAt.timeAgo()}',
+                style: textTheme.bodySmall!.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RichText(
-              textAlign: TextAlign.end,
-              text: TextSpan(
-                text: script.title,
-                style: textTheme.titleLarge!.copyWith(
-                  color: Colors.black,
-                ),
-                children: [
-                  TextSpan(
-                    text: '   ${script.updatedAt.timeAgo()}',
-                    style: textTheme.bodySmall!.copyWith(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
+            Text(
+              script.description == null || script.description!.isEmpty
+                  ? 'No description'
+                  : script.description!,
+              style: const TextStyle(
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Center(
-                child: Text(
-                  script.description == null || script.description!.isEmpty
-                      ? 'No description'
-                      : script.description!,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
+            Text(
+              'CreatedAt: ${script.createdAt.toMonthString()} ${script.createdAt.amPmTime}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            Text(
+              'UpdatedAt: ${script.updatedAt.toMonthString()} ${script.updatedAt.amPmTime}',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+        trailing: Wrap(
+          alignment: WrapAlignment.end,
+          runAlignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.end,
+          children: [
+            LoadingIconButton(
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+              ),
+              tooltip: 'Delete Script',
+              onPressed: _delete,
+              icon: const Icon(
+                Icons.delete_rounded,
+                color: Colors.red,
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                runAlignment: WrapAlignment.end,
-                crossAxisAlignment: WrapCrossAlignment.end,
-                children: [
-                  LoadingIconButton(
-                    tooltip: 'Delete Script',
-                    onPressed: () async {
-                      await script.delete();
-                    },
-                    icon: const Icon(
-                      Icons.delete_rounded,
-                      color: Colors.red,
-                    ),
-                  ),
-                  LoadingIconButton(
-                    tooltip: 'Edit Script',
-                    onPressed: () async {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ScriptEditScreen(
-                            script: script,
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.edit_rounded,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  PlayScriptButton(script: script),
-                ],
-              ),
-            ),
+            const SizedBox(width: 10),
+            PlayScriptButton(script: script),
           ],
         ),
       ),
     );
   }
+
+  Future<void> _edit() async {
+    if (!await script.scriptFile.exists()) {
+      showError('Can\'t edit the script as the file does not exist!');
+      return;
+    }
+    await Navigator.of(appContext).push(
+      MaterialPageRoute(
+        builder: (context) => ScriptEditScreen(
+          script: script,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _delete() async => script.delete();
 }

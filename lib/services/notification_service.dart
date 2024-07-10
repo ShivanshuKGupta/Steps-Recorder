@@ -25,3 +25,30 @@ void showError(String msg) {
     ),
   );
 }
+
+Future<bool?> showConfirmDialog(
+    {required String title, required String content}) async {
+  return showDialog<bool>(
+    context: appContext,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('No'),
+          ),
+        ],
+      );
+    },
+  );
+}
