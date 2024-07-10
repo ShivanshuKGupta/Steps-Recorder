@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,12 +22,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    unawaited(Directory(scriptsFolder).exists().then((value) async {
+    Directory(scriptsFolder).exists().then((value) async {
       if (!value) {
-        await Directory(scriptsFolder).create();
+        try {
+          await Directory(scriptsFolder).create();
+        } catch (e) {
+          showError('Error creating scripts folder: $e');
+        }
       }
       Directory(scriptsFolder).watch().listen(_fileChange);
-    }));
+    });
     _loadScripts();
   }
 
@@ -98,9 +101,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _loadScripts() {
-    unawaited(loadAllScripts().then((loadedScripts) => setState(() {
+    loadAllScripts().then((loadedScripts) => setState(() {
           scripts = loadedScripts;
           scripts.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-        })));
+        }));
   }
 }

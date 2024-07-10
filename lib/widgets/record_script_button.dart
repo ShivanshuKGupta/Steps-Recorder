@@ -22,9 +22,9 @@ class RecordScriptButton extends StatefulWidget {
 }
 
 class _RecordScriptButtonState extends State<RecordScriptButton> {
-  late ProcessStatus lastStatus = widget.script.watchStatus;
+  late ProcessStatus lastStatus = widget.script.watchServiceStatus;
   final WatchService _keyboardWatcher = WatchService(
-    scriptFilePath: null,
+    outputScriptFilePath: null,
     keyboardOnlyMode: true,
   );
 
@@ -60,25 +60,26 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
   Widget build(BuildContext context) {
     return LoadingElevatedButton(
       label: Text(
-        widget.script.watchStatus == ProcessStatus.running
+        widget.script.watchServiceStatus == ProcessStatus.running
             ? 'Stop Recording'
             : 'Record',
       ),
       style: ElevatedButton.styleFrom(
-        foregroundColor: widget.script.watchStatus == ProcessStatus.running
-            ? Colors.red
-            : Colors.green,
+        foregroundColor:
+            widget.script.watchServiceStatus == ProcessStatus.running
+                ? Colors.red
+                : Colors.green,
       ),
       icon: Icon(
-        widget.script.watchStatus == ProcessStatus.running
+        widget.script.watchServiceStatus == ProcessStatus.running
             ? Icons.stop
             : Icons.fiber_manual_record,
-        color: widget.script.watchStatus == ProcessStatus.running
+        color: widget.script.watchServiceStatus == ProcessStatus.running
             ? Colors.red
             : Colors.green,
       ),
       onPressed: () async {
-        if (widget.script.watchStatus == ProcessStatus.running) {
+        if (widget.script.watchServiceStatus == ProcessStatus.running) {
           widget.script.stopRecording();
         } else {
           await widget.script.record();
@@ -91,8 +92,8 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
     setState(() {
       if (data != null) showMsg(data);
     });
-    if (lastStatus == widget.script.watchStatus) return;
-    if (widget.script.watchStatus == ProcessStatus.running) {
+    if (lastStatus == widget.script.watchServiceStatus) return;
+    if (widget.script.watchServiceStatus == ProcessStatus.running) {
       await windowManager.minimize();
     } else {
       showMsg('Recording saved: ${widget.script.scriptFilePath}');
@@ -100,7 +101,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
       await windowManager.show();
       await windowManager.focus();
     }
-    lastStatus = widget.script.watchStatus;
+    lastStatus = widget.script.watchServiceStatus;
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {
@@ -113,7 +114,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
     for (final event in events) {
       if (event is KeyboardEvent &&
           event.specialKey == Config.endKey &&
-          widget.script.watchStatus == ProcessStatus.running) {
+          widget.script.watchServiceStatus == ProcessStatus.running) {
         log('Stopping recording', name: 'RecordScriptButton');
         widget.script.stopRecording();
       }

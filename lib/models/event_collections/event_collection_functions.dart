@@ -4,12 +4,11 @@ import '../events/mouse/mouse_event.dart';
 import 'keyboard_type_collection.dart';
 import 'mouse_move_collection.dart';
 
-/// Reduces raw events to a collection of events
+/// Reduces raw keyboard/mouse events to a collection of events
 ///
 /// Typically, this function is used to reduce raw mouse move events
-/// to a single instance of mouse collection event.
-///
-/// Same goes for keyboard events for typing a bunch of characters.
+/// to a single instance of mouse collection event and
+/// keyboard events for typing a bunch of characters.
 List<Event> reduceEvents(List<Event> events) {
   if (events.isEmpty) return events;
 

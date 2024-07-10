@@ -22,9 +22,9 @@ class PlayScriptButton extends StatefulWidget {
 }
 
 class _PlayScriptButtonState extends State<PlayScriptButton> {
-  late ProcessStatus lastStatus = widget.script.executeStatus;
+  late ProcessStatus lastStatus = widget.script.executeServiceStatus;
   final WatchService _keyboardWatcher = WatchService(
-    scriptFilePath: null,
+    outputScriptFilePath: null,
     keyboardOnlyMode: true,
   );
 
@@ -59,19 +59,19 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   @override
   Widget build(BuildContext context) {
     return LoadingIconButton(
-      tooltip: widget.script.executeStatus == ProcessStatus.running
+      tooltip: widget.script.executeServiceStatus == ProcessStatus.running
           ? 'Stop Script'
           : 'Play Script',
       icon: Icon(
-        widget.script.executeStatus == ProcessStatus.running
+        widget.script.executeServiceStatus == ProcessStatus.running
             ? Icons.stop
             : Icons.play_arrow,
-        color: widget.script.executeStatus == ProcessStatus.running
+        color: widget.script.executeServiceStatus == ProcessStatus.running
             ? Colors.red
             : Colors.green,
       ),
       onPressed: () async {
-        if (widget.script.executeStatus == ProcessStatus.running) {
+        if (widget.script.executeServiceStatus == ProcessStatus.running) {
           widget.script.stop();
         } else {
           await widget.script.play();
@@ -84,8 +84,8 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
     setState(() {
       if (data != null) showMsg(data);
     });
-    if (lastStatus == widget.script.executeStatus) return;
-    if (widget.script.executeStatus == ProcessStatus.running) {
+    if (lastStatus == widget.script.executeServiceStatus) return;
+    if (widget.script.executeServiceStatus == ProcessStatus.running) {
       log('Minimizing', name: 'PlayScriptButton');
       await windowManager.minimize();
       // await windowManager.hide();
@@ -94,7 +94,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
       await windowManager.restore();
       await windowManager.show();
     }
-    lastStatus = widget.script.executeStatus;
+    lastStatus = widget.script.executeServiceStatus;
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {
@@ -108,7 +108,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
     for (final event in events) {
       if (event is KeyboardEvent &&
           event.specialKey == Config.endKey &&
-          widget.script.executeStatus == ProcessStatus.running) {
+          widget.script.executeServiceStatus == ProcessStatus.running) {
         log('Stopping execution', name: 'RecordScriptButton');
         widget.script.stop();
       }

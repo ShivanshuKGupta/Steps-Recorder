@@ -248,9 +248,9 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
   Future<void> _fileChangeHandler(FileSystemEvent event) async {
     if (disposed) return;
     final eventPath = event.path.replaceAll('\\', '/');
-    final scriptPath = script.file.path.replaceAll('\\', '/');
+    final scriptPath = script.scriptFile.path.replaceAll('\\', '/');
     if (eventPath == scriptPath) {
-      script = await loadScript(script.file.absolute.path);
+      script = await loadScript(script.scriptFile.absolute.path);
       setState(() {
         script.events = reduceEvents(script.events);
       });

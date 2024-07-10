@@ -8,13 +8,20 @@ import '../models/events/keyboard/keyboard_event.dart';
 import '../models/script/script.dart';
 import 'notification_service.dart';
 
-part 'execute_service.dart';
-part 'watcher_service.dart';
+part 'execute_service.g.dart';
+part 'watch_service.g.dart';
 
 enum ProcessStatus {
+  /// The process is not running / or has stopped gracefully (exit code == 0)
   stopped,
+
+  /// The process is running
   running,
+
+  /// The process was aborted on itself (exit code != 0)
   aborted,
+
+  /// The process was killed by the user/app
   killed,
 }
 
@@ -33,7 +40,7 @@ abstract class ProcessService {
 
   ProcessStatus get status => _status;
 
-  /// The process
+  /// The process instance
   Process? _process;
 
   /// A list of listeners used to notify when the process has output
@@ -50,7 +57,7 @@ abstract class ProcessService {
       throw 'This process is already running';
     }
 
-    _log('Starting...');
+    _log('Starting Process...');
     _process = await Process.start(command, arguments);
     _log('Process started');
 
@@ -58,7 +65,7 @@ abstract class ProcessService {
     try {
       _onStart?.call();
     } catch (e) {
-      _log('Error calling onStart: $e');
+      _log('Error in _onStart: $e');
     }
     notifyListeners(null);
 
@@ -76,7 +83,7 @@ abstract class ProcessService {
       try {
         _onExit?.call(_status);
       } catch (e) {
-        _log('Error calling onExit: $e');
+        _log('Error in _onExit: $e');
       }
       notifyListeners(null);
     });
@@ -113,7 +120,9 @@ abstract class ProcessService {
   }
 
   /// Notifies all listeners about the process's output
-  /// or [_status]
+  /// or [_status].
+  /// If [data] is given as null then it will mean that only the
+  /// [_status] has changed.
   void notifyListeners(String? data) {
     for (final listener in _listeners) {
       try {

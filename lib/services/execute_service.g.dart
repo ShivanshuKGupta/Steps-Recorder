@@ -1,14 +1,11 @@
 part of 'process_service.dart';
 
 /// A service to execute scripts
-/// Just give the path to the script file and make sure that a
-/// file with the same name and a '.tmp' extension exists
-/// with the events to be executed separated by new lines
 class ExecuteService extends ProcessService {
   /// A map of all running services
   static final allServices = <String, ExecuteService>{};
 
-  /// The path to the script file
+  /// The full path to the script file to execute
   final String scriptFilePath;
 
   ExecuteService({required this.scriptFilePath}) : super();
@@ -16,19 +13,19 @@ class ExecuteService extends ProcessService {
   @override
   void _log(dynamic msg) => dev.log(msg.toString(), name: 'Execute Service');
 
-  /// Starts the script
+  /// Starts executing the script.
+  ///
+  /// Make sure to save the script to [scriptFilePath] before calling this function
   Future<void> play() async {
     if (!await File(scriptFilePath).exists()) {
       throw 'Script file \'$scriptFilePath\' does not exist';
     }
 
-    if (!await File('$scriptFilePath.tmp').exists()) {
-      throw 'Script events file \'$scriptFilePath.tmp\' does not exist';
-    }
-
     if (allServices[scriptFilePath]?.status == ProcessStatus.running) {
       throw 'Another instance of the same script is already running';
     }
+
+    await _createTmpFile();
 
     _onStart = () {
       allServices[scriptFilePath] = this;
@@ -57,7 +54,20 @@ class ExecuteService extends ProcessService {
   //   });
   // }
 
-  void kill() {
-    _kill();
+  void kill() => _kill();
+
+  /// Reads all events from the [scriptFilePath] file,
+  /// and then creates a .tmp file with all its events in it
+  Future<void> _createTmpFile() async {
+    final script = await loadScript(scriptFilePath);
+
+    final tmpFile = File('$scriptFilePath.tmp');
+    if (await tmpFile.exists()) {
+      await tmpFile.delete();
+    }
+
+    await tmpFile.writeAsString(
+      script.events.map((e) => json.encode(e.toJson())).join('\n'),
+    );
   }
 }

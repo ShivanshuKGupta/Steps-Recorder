@@ -9,7 +9,7 @@ import '../events/event.dart';
 import '../events/keyboard/keyboard_event.dart';
 import '../events/mouse/mouse_event.dart';
 
-part 'script_functions.dart';
+part 'script_functions.g.dart';
 
 class Script {
   /// The title of the script
@@ -31,21 +31,21 @@ class Script {
   late final String scriptFilePath = '$scriptsFolder/$title.json';
 
   /// The file object of the script
-  late final File file = File(scriptFilePath);
+  late final File scriptFile = File(scriptFilePath);
 
   /// The service to execute the script
-  late final _executeService = ExecuteService.allServices[scriptFilePath] ??=
-      ExecuteService(scriptFilePath: scriptFilePath);
+  late final _executeService = (ExecuteService.allServices[scriptFilePath] ??=
+      ExecuteService(scriptFilePath: scriptFilePath));
 
   /// The status of the execute service
-  ProcessStatus get executeStatus => _executeService.status;
+  ProcessStatus get executeServiceStatus => _executeService.status;
 
   /// The service to watch the script
-  late final _watchService = WatchService.allServices[scriptFilePath] ??=
-      WatchService(scriptFilePath: scriptFilePath);
+  late final _watchService = (WatchService.allServices[scriptFilePath] ??=
+      WatchService(outputScriptFilePath: scriptFilePath));
 
   /// The status of the watch service
-  ProcessStatus get watchStatus => _watchService.status;
+  ProcessStatus get watchServiceStatus => _watchService.status;
 
   Script({
     required this.title,

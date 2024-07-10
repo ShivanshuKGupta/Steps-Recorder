@@ -2,6 +2,7 @@ import '../events/event.dart';
 import '../events/mouse/mouse_event.dart';
 import 'event_collection.dart';
 
+/// A collection of mouse events.
 class MouseEventCollection extends EventCollection {
   static const String eventType = 'mouse_event_collection';
   final List<MouseEvent> events = [];

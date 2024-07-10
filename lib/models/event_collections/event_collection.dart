@@ -1,5 +1,7 @@
 import '../events/event.dart';
 
+/// Just a collection class to hold multiple events.
+/// It is used to reduce the amount of events that are shown in the UI.
 abstract class EventCollection extends Event {
   EventCollection({required super.type});
 

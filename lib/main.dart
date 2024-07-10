@@ -3,10 +3,9 @@ import 'package:window_manager/window_manager.dart';
 
 import 'app.dart';
 import 'config.dart';
-import 'handlers/arguments_handler.dart';
 
 void main(List<String> arguments) async {
-  if (await handleArguments(arguments)) return;
+  // if (await handleArguments(arguments)) return;
 
   WidgetsFlutterBinding.ensureInitialized();
   await Config.loadFromFile();

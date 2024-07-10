@@ -16,8 +16,13 @@ class ScriptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// an auto generated bright color based on the script's creation date
+    final color =
+        colorsForScripts[script.createdAt.hashCode % colorsForScripts.length];
+
     return Card(
       elevation: 10,
+      color: color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),

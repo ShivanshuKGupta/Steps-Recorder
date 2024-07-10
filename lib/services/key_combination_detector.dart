@@ -5,24 +5,44 @@ import '../models/events/keyboard/keyboard_event.dart';
 import '../models/events/keyboard/special_keys.dart';
 import 'process_service.dart';
 
+/// Class which can be used to listen for keyboard events and detect a key combination.
+/// When a key combination is detected, it calls the [onDetect] function.
+///
+/// This can be used to listen for a key combination and call a function when it is detected.
+/// Ideally, you use a global instance of [WatchService] to listen for keyboard events.
+/// Instead of creating a new instance of [WatchService] for each [KeyCombinationDetector].
 class KeyCombinationDetector {
   late String _keyCombination;
+
+  /// The key combination to detect.
   String get keyCombination => _keyCombination;
+
+  /// Sets the key combination to detect,
+  /// before setting it, it checks if the key combination is valid.
   set keyCombination(String value) {
+    /// Check if the key combination is valid.
     final List<String> keys = value.split('+');
     final invalidKey = check(keys);
     if (invalidKey != null) {
       throw ArgumentError('Invalid key combination: $value');
     }
+
+    /// Sort the keys to make sure the key combination is always the same.
     keys.sort();
+
+    /// Set the key combination.
     _keyCombination = keys.join('+');
   }
 
   final List<String> _currentKeyCombination = [];
+
+  /// The current key combination being pressed
   String get currentKeyCombination => _currentKeyCombination.join('+');
 
+  /// The [WatchService] used to listen to keyboard events.
   late final WatchService watchService;
 
+  /// The function to call when the key combination is detected.
   final void Function() onDetect;
 
   /// Detects a key combination.
@@ -37,12 +57,14 @@ class KeyCombinationDetector {
     this.keyCombination = keyCombination;
     this.watchService = watchService ??
         WatchService(
-          scriptFilePath: null,
+          outputScriptFilePath: null,
           keyboardOnlyMode: true,
         );
   }
 
   /// Starts watching for keyboard events.
+  ///
+  /// Do not forget to call [stopWatching] when you are done.
   Future<void> startWatching() async {
     await watchService.record();
     watchService.addListener(_onKeyboardEvent);
