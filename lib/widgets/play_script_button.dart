@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../config.dart';
+import '../globals.dart';
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
 import '../models/script/script.dart';
@@ -60,7 +61,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
   Widget build(BuildContext context) {
     return LoadingIconButton(
       style: IconButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
       ),
       tooltip: widget.script.executeServiceStatus == ProcessStatus.running
           ? 'Stop Script'
@@ -70,7 +71,7 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
             ? Icons.stop
             : Icons.play_arrow,
         color: widget.script.executeServiceStatus == ProcessStatus.running
-            ? Colors.red
+            ? colorScheme.error
             : Colors.green,
       ),
       onPressed: () async {

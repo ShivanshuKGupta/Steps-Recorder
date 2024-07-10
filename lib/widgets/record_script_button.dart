@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../config.dart';
+import '../globals.dart';
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
 import '../models/script/script.dart';
@@ -67,7 +68,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
       style: ElevatedButton.styleFrom(
         foregroundColor:
             widget.script.watchServiceStatus == ProcessStatus.running
-                ? Colors.red
+                ? colorScheme.error
                 : Colors.green,
       ),
       icon: Icon(
@@ -75,7 +76,7 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
             ? Icons.stop
             : Icons.fiber_manual_record,
         color: widget.script.watchServiceStatus == ProcessStatus.running
-            ? Colors.red
+            ? colorScheme.error
             : Colors.green,
       ),
       onPressed: () async {

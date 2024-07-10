@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,8 +24,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Directory(scriptsFolder).exists().then((value) async {
-      if (!value) {
+    unawaited(Directory(scriptsFolder).exists().then((exists) async {
+      if (!exists) {
         try {
           await Directory(scriptsFolder).create();
         } catch (e) {
@@ -32,8 +33,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       }
       Directory(scriptsFolder).watch().listen(_fileChange);
-    });
-    _loadScripts();
+    }));
+    unawaited(_loadScripts());
   }
 
   @override
@@ -55,6 +56,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         actions: [
           LoadingIconButton(
+            tooltip: 'Refresh',
+            style: IconButton.styleFrom(
+              iconSize: 30,
+              foregroundColor: Colors.blue,
+            ),
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: _loadScripts,
+          ),
+          LoadingIconButton(
+            tooltip: 'Delete All Scripts',
             style: IconButton.styleFrom(
               iconSize: 30,
               foregroundColor: colorScheme.error,
@@ -63,9 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             onPressed: _deleteAllScripts,
           ),
           IconButton(
-            style: IconButton.styleFrom(
-              iconSize: 30,
-            ),
+            style: IconButton.styleFrom(iconSize: 30),
             tooltip: 'Settings',
             icon: const Icon(Icons.settings_rounded),
             onPressed: () async {
@@ -75,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   builder: (context) => const SettingsScreen(),
                 ),
               );
+              setState(() {});
             },
           ),
         ],
@@ -106,14 +116,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _fileChange(FileSystemEvent event) {
-    _loadScripts();
+    unawaited(_loadScripts());
   }
 
-  void _loadScripts() {
-    loadAllScripts().then((loadedScripts) => setState(() {
-          scripts = loadedScripts;
-          scripts.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-        }));
+  Future<void> _loadScripts() async {
+    scripts = await loadAllScripts();
+    setState(() {
+      scripts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    });
   }
 
   Future<void> _deleteAllScripts() async {

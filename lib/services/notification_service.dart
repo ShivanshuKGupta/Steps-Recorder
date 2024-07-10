@@ -17,7 +17,7 @@ void showError(String msg) {
   ScaffoldMessenger.of(appContext).showSnackBar(
     SnackBar(
       content: Text(msg),
-      backgroundColor: Colors.red,
+      backgroundColor: colorScheme.error,
       action: SnackBarAction(
         label: 'Close',
         onPressed: () {},

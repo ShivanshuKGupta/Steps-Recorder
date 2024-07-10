@@ -220,7 +220,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                 ),
                 IconButton(
                   tooltip: 'Delete Event',
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(Icons.delete, color: colorScheme.error),
                   onPressed: () {
                     setState(() {
                       script.events.remove(event);

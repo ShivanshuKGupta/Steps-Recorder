@@ -34,14 +34,14 @@ class ScriptWidget extends StatelessWidget {
           text: TextSpan(
             text: script.title,
             style: textTheme.titleLarge!.copyWith(
-              color: Colors.white,
+              color: colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
             children: [
               TextSpan(
                 text: '   ${script.updatedAt.timeAgo()}',
                 style: textTheme.bodySmall!.copyWith(
-                  color: Colors.white,
+                  color: colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -54,17 +54,17 @@ class ScriptWidget extends StatelessWidget {
               script.description == null || script.description!.isEmpty
                   ? 'No description'
                   : script.description!,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colorScheme.onPrimary,
               ),
             ),
             Text(
               'CreatedAt: ${script.createdAt.toMonthString()} ${script.createdAt.amPmTime}',
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: colorScheme.onPrimary),
             ),
             Text(
               'UpdatedAt: ${script.updatedAt.toMonthString()} ${script.updatedAt.amPmTime}',
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: colorScheme.onPrimary),
             ),
           ],
         ),
@@ -75,13 +75,13 @@ class ScriptWidget extends StatelessWidget {
           children: [
             LoadingIconButton(
               style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: colorScheme.surface,
               ),
               tooltip: 'Delete Script',
               onPressed: _delete,
-              icon: const Icon(
+              icon: Icon(
                 Icons.delete_rounded,
-                color: Colors.red,
+                color: colorScheme.error,
               ),
             ),
             const SizedBox(width: 10),

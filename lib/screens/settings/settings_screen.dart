@@ -9,6 +9,7 @@ import '../../models/events/keyboard/special_keys.dart';
 import '../../services/notification_service.dart';
 import '../../utils/extensions/string_extension.dart';
 import '../../utils/widgets/loading_elevated_button.dart';
+import '../../utils/widgets/theme_mode_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -47,6 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: const Text('Settings'),
         actions: [
+          const ThemeModeButton(),
           LoadingElevatedButton(
             icon: const Icon(
               Icons.save_rounded,
