@@ -53,6 +53,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                 value: widget.event.state,
                 decoration: InputDecoration(
                   isDense: true,
+                  border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   floatingLabelStyle: textTheme.bodyLarge,
                 ),
@@ -75,6 +76,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                 value: widget.event.specialKey != null ? 'special' : 'key',
                 decoration: const InputDecoration(
                   isDense: true,
+                  border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   prefixText: 'Type: ',
                 ),
@@ -106,6 +108,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                       // style: textTheme.bodySmall,
                       decoration: const InputDecoration(
                         isDense: true,
+                        border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                       ),
                       onChanged: (value) {
@@ -119,6 +122,7 @@ class _KeyboardEventWidgetState extends State<KeyboardEventWidget> {
                       decoration: const InputDecoration(
                         alignLabelWithHint: true,
                         counter: SizedBox(),
+                        border: InputBorder.none,
                         contentPadding: EdgeInsets.only(top: 8),
                         isDense: true,
                         enabledBorder: InputBorder.none,

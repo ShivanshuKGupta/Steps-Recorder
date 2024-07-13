@@ -50,6 +50,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                 value: widget.event.mouseEventType,
                 decoration: InputDecoration(
                   isDense: true,
+                  border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   floatingLabelStyle: textTheme.bodyLarge,
                 ),
@@ -71,6 +72,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   decoration: const InputDecoration(
                     prefixText: 'X: ',
                     contentPadding: EdgeInsets.only(top: 8),
+                    border: InputBorder.none,
                     alignLabelWithHint: true,
                     counter: SizedBox(),
                     isDense: true,
@@ -94,6 +96,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   decoration: const InputDecoration(
                     prefixText: 'Y: ',
                     contentPadding: EdgeInsets.only(top: 8),
+                    border: InputBorder.none,
                     alignLabelWithHint: true,
                     counter: SizedBox(),
                     isDense: true,
@@ -127,6 +130,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   decoration: InputDecoration(
                     prefixText: 'DX: ',
                     isDense: true,
+                    border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     floatingLabelStyle: textTheme.bodyLarge,
                   ),
@@ -150,6 +154,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                   decoration: InputDecoration(
                     prefixText: 'DY: ',
                     isDense: true,
+                    border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     floatingLabelStyle: textTheme.bodyLarge,
                   ),
@@ -159,6 +164,35 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                 ),
               ),
             ],
+            // MouseBttn
+            if (widget.event.mouseEventType == MouseEventType.press ||
+                widget.event.mouseEventType == MouseEventType.release)
+              Expanded(
+                child: DropdownButtonFormField(
+                  items: MouseBttn.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name.toPascalCase()),
+                        ),
+                      )
+                      .toList(),
+                  isDense: true,
+                  value: widget.event.button,
+                  decoration: InputDecoration(
+                    prefixText: 'Bttn: ',
+                    isDense: true,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    floatingLabelStyle: textTheme.bodyLarge,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      widget.event.button = value;
+                    });
+                  },
+                ),
+              ),
           ],
         ),
         onFocusChange: (value) {

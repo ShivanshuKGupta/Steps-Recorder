@@ -4,7 +4,6 @@ import '../../globals.dart';
 import '../../models/script/script.dart';
 import '../../services/notification_service.dart';
 import '../../utils/extensions/datetime_extension.dart';
-import '../../utils/widgets/loading_icon_button.dart';
 import '../../widgets/play_script_button.dart';
 import 'script_edit_screen.dart';
 
@@ -89,26 +88,7 @@ class ScriptWidget extends StatelessWidget {
             ),
           ],
         ),
-        trailing: Wrap(
-          alignment: WrapAlignment.end,
-          runAlignment: WrapAlignment.end,
-          crossAxisAlignment: WrapCrossAlignment.end,
-          children: [
-            LoadingIconButton(
-              style: IconButton.styleFrom(
-                backgroundColor: colorScheme.surface,
-              ),
-              tooltip: 'Delete Script',
-              onPressed: _delete,
-              icon: Icon(
-                Icons.delete_rounded,
-                color: colorScheme.error,
-              ),
-            ),
-            const SizedBox(width: 10),
-            PlayScriptButton(script: script),
-          ],
-        ),
+        trailing: PlayScriptButton(script: script),
       ),
     );
   }
@@ -125,15 +105,5 @@ class ScriptWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _delete() async {
-    final bool? confirmation = await showConfirmDialog(
-      title: 'Delete Script?',
-      content:
-          'Are you sure you want to delete \'${script.displayTitle}\' script?',
-    );
-    if (confirmation == null || !confirmation) return;
-    script.delete();
   }
 }

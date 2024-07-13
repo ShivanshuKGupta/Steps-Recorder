@@ -15,6 +15,7 @@ import '../../models/events/mouse/mouse_event.dart';
 import '../../models/script/script.dart';
 import '../../services/notification_service.dart';
 import '../../utils/widgets/loading_icon_button.dart';
+import '../../widgets/play_script_button.dart';
 import '../../widgets/record_script_button.dart';
 import 'event_widgets/custom_event_widget.dart';
 import 'event_widgets/keyboard_event_widget.dart';
@@ -105,6 +106,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  PlayScriptButton(script: script),
                   LoadingIconButton(
                       tooltip: 'Save Script',
                       icon: const Icon(
@@ -117,6 +119,23 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                           script.events = reduceEvents(script.events);
                         });
                       }),
+                  LoadingIconButton(
+                    tooltip: 'Delete Script',
+                    icon: Icon(Icons.delete_rounded, color: colorScheme.error),
+                    onPressed: () async {
+                      final bool? confirmation = await showConfirmDialog(
+                        title: 'Delete Script?',
+                        content:
+                            'Are you sure you want to delete \'${script.displayTitle}\' script?',
+                      );
+                      if (confirmation == null || !confirmation) return;
+                      Navigator.of(context).pop();
+                      await Future.delayed(const Duration(milliseconds: 500),
+                          () {
+                        script.delete();
+                      });
+                    },
+                  ),
                   RecordScriptButton(script: script),
                 ],
               ),

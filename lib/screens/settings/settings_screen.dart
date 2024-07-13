@@ -78,6 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // style: textTheme.bodySmall,
               decoration: const InputDecoration(
                 prefixText: 'End Key: ',
+                border: InputBorder.none,
               ),
               onChanged: (value) {
                 setState(() {
@@ -91,6 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller:
                   TextEditingController(text: Config.startPlayingKeyShortcut),
               decoration: InputDecoration(
+                border: InputBorder.none,
                 hintText: 'Ctrl + Alt + p',
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
@@ -109,6 +111,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller:
                   TextEditingController(text: Config.startRecordingKeyShortcut),
               decoration: InputDecoration(
+                border: InputBorder.none,
                 hintText: 'Ctrl + Alt + r',
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
@@ -126,6 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             TextField(
               controller: TextEditingController(text: Config.port.toString()),
               decoration: InputDecoration(
+                border: InputBorder.none,
                 hintText: '4040',
                 isDense: true,
                 contentPadding: EdgeInsets.zero,

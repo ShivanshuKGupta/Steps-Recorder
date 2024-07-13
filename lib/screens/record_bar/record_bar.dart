@@ -50,15 +50,9 @@ class _RecordBarState extends State<RecordBar> {
 
   @override
   void dispose() {
-    disposed = true;
-
-    unawaited(restoreWindow());
-    stopService();
-    _keyboardWatcher.stopRecording();
-
-    widget.service.removeListener(_serviceListener);
-    _keyboardWatcher.removeListener(_onKeyboardEvent);
-
+    if (!disposed) {
+      unawaited(cleanUp());
+    }
     super.dispose();
   }
 
@@ -140,7 +134,9 @@ class _RecordBarState extends State<RecordBar> {
       log('Service stopped', name: 'RecordBar');
       if (context.mounted && !disposed) {
         log('Popping RecordBar', name: 'RecordBar');
-        Navigator.of(context).pop();
+        cleanUp().then((_) {
+          Navigator.of(context).pop();
+        });
       }
     }
   }
@@ -170,5 +166,15 @@ class _RecordBarState extends State<RecordBar> {
       showError('Unknown service type');
       return;
     }
+  }
+
+  Future<void> cleanUp() async {
+    disposed = true;
+    await restoreWindow();
+    stopService();
+    _keyboardWatcher.stopRecording();
+
+    widget.service.removeListener(_serviceListener);
+    _keyboardWatcher.removeListener(_onKeyboardEvent);
   }
 }

@@ -47,6 +47,7 @@ class _CustomEventWidgetState extends State<CustomEventWidget> {
                 value: widget.event.command,
                 decoration: InputDecoration(
                   isDense: true,
+                  border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   floatingLabelStyle: textTheme.bodyLarge,
                 ),
@@ -64,6 +65,7 @@ class _CustomEventWidgetState extends State<CustomEventWidget> {
               Expanded(
                 child: TextField(
                   decoration: const InputDecoration(
+                    border: InputBorder.none,
                     alignLabelWithHint: true,
                     counter: SizedBox(),
                     isDense: true,

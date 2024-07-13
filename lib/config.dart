@@ -61,8 +61,8 @@ class Config {
 
   /// Save the current config to the config.json file in the [pythonScriptsFolderPath]
   ///
-  /// If the file is corrupted, it will be deleted.
-  /// If the file does not exist, it will be created with default values.
+  /// If the file is corrupted or does not exist,
+  /// it will be re-created with default values.
   static Future<void> save() async {
     final file = File('$pythonScriptsFolderPath/config.json');
     await file.writeAsString(json.encode(toJson()));

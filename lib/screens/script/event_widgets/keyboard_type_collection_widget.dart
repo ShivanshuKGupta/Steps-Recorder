@@ -34,9 +34,10 @@ class _KeyboardEventWidgetState extends State<KeyboardTypeCollectionWidget> {
           color: Colors.blue,
         ),
         title: TextField(
-          maxLines: 1,
+          maxLines: null,
           decoration: const InputDecoration(
             alignLabelWithHint: true,
+            border: InputBorder.none,
             counter: SizedBox(),
             contentPadding: EdgeInsets.only(top: 8),
             isDense: true,
