@@ -178,7 +178,7 @@ class _MouseEventWidgetState extends State<MouseEventWidget> {
                       )
                       .toList(),
                   isDense: true,
-                  value: widget.event.button,
+                  value: widget.event.button ?? MouseBttn.left,
                   decoration: InputDecoration(
                     prefixText: 'Bttn: ',
                     isDense: true,

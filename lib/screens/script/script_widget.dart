@@ -88,7 +88,7 @@ class ScriptWidget extends StatelessWidget {
             ),
           ],
         ),
-        trailing: PlayScriptButton(script: script),
+        leading: PlayScriptButton(script: script),
       ),
     );
   }

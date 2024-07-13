@@ -1,1 +1,7 @@
-{"endKey":"ctrl_r","startRecordingKeyShortcut":null,"startPlayingKeyShortcut":null,"port":4040,"themeMode":"system"}
+{
+    "endKey": "esc",
+    "startRecordingKeyShortcut": null,
+    "startPlayingKeyShortcut": null,
+    "port": 4040,
+    "themeMode": "system"
+}
