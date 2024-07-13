@@ -10,7 +10,7 @@ import 'models/events/keyboard/special_keys.dart';
 /// Folder Path where python scripts are stored.
 final pythonScriptsFolderPath = kDebugMode
     ? 'F:/S_Data/Flutter_Projects/steps_recorder/python'
-    : '${Platform.resolvedExecutable}/python';
+    : '${File(Platform.resolvedExecutable).parent.path}/python';
 
 final scriptsFolder = '$pythonScriptsFolderPath/scripts';
 
