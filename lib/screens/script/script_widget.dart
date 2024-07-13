@@ -16,7 +16,6 @@ class ScriptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final color =
         colorsForScripts[script.createdAt.hashCode % colorsForScripts.length];
 
@@ -98,12 +97,14 @@ class ScriptWidget extends StatelessWidget {
       showError('Can\'t edit the script as the file does not exist!');
       return;
     }
-    await Navigator.of(appContext).push(
-      MaterialPageRoute(
-        builder: (context) => ScriptEditScreen(
-          script: script,
+    if (appContext.mounted) {
+      await Navigator.of(appContext).push(
+        MaterialPageRoute(
+          builder: (context) => ScriptEditScreen(
+            script: script,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

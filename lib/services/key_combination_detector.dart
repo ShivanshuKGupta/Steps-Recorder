@@ -71,9 +71,9 @@ class KeyCombinationDetector {
   }
 
   /// Stops watching for keyboard events.
-  void stopWatching() {
+  Future<void> stopWatching() async {
     watchService.removeListener(_onKeyboardEvent);
-    watchService.stopRecording();
+    await watchService.stopRecording();
   }
 
   /// Adds/Removes a keyboard event to the current key combination based

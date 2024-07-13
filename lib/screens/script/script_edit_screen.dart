@@ -129,8 +129,10 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                             'Are you sure you want to delete \'${script.displayTitle}\' script?',
                       );
                       if (confirmation == null || !confirmation) return;
-                      Navigator.of(context).pop();
-                      await Future.delayed(const Duration(milliseconds: 500),
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                      await Future.delayed(const Duration(milliseconds: 250),
                           () {
                         script.delete();
                       });

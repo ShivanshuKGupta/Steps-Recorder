@@ -54,12 +54,14 @@ class _PlayScriptButtonState extends State<PlayScriptButton> {
           widget.script.stop();
         } else {
           await widget.script.play();
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  RecordBar(service: widget.script.executeService),
-            ),
-          );
+          if (context.mounted) {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    RecordBar(service: widget.script.executeService),
+              ),
+            );
+          }
         }
       },
     );

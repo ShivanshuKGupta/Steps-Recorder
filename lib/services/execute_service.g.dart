@@ -11,7 +11,8 @@ class ExecuteService extends ProcessService {
   ExecuteService({required this.scriptFilePath}) : super();
 
   @override
-  void _log(dynamic msg) => dev.log(msg.toString(), name: 'Execute Service');
+  void _log(dynamic msg) =>
+      dev.log(msg.toString(), name: 'Execute Service ($getPid)');
 
   /// Starts executing the script.
   ///

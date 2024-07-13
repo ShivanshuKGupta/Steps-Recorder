@@ -30,9 +30,11 @@ class _RecordBarState extends State<RecordBar> {
   @override
   void initState() {
     super.initState();
-    unawaited(init().onError(
-      (e, s) => showError('Error initializing RecordBar: $e\n$s'),
-    ));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(init().onError(
+        (e, s) => showError('Error initializing RecordBar: $e\n$s'),
+      ));
+    });
   }
 
   Future<void> init() async {
@@ -46,6 +48,9 @@ class _RecordBarState extends State<RecordBar> {
     }
 
     await _keyboardWatcher.record();
+
+    log('_keyboardWatcher.pid = ${_keyboardWatcher.getPid}');
+    log('widget.service.pid = ${widget.service.getPid}');
   }
 
   @override
@@ -61,29 +66,30 @@ class _RecordBarState extends State<RecordBar> {
     return Material(
       elevation: 0,
       color: Colors.transparent,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          padding: const EdgeInsets.all(0),
-          backgroundColor: colorScheme.surface,
-        ),
-        icon: Icon(
-          Icons.stop,
-          color: colorScheme.error,
-        ),
-        label: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text('Press ${Config.endKey.name} to stop'),
-        ),
-        onPressed: stopService,
-      ),
+      child: disposed
+          ? const Center(child: Text('Saving Script...'))
+          : ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.all(0),
+                backgroundColor: colorScheme.surface,
+              ),
+              icon: Icon(
+                Icons.stop,
+                color: colorScheme.error,
+              ),
+              label: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('Press ${Config.endKey.name} to stop'),
+              ),
+              onPressed: stopService,
+            ),
     );
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {
-    log('Received keyboard event: $data', name: 'RecordBar');
     if (data == null) return;
     final List<Event?> events = data.split('\n').map((e) {
       if (e.isEmpty) return null;
@@ -95,7 +101,7 @@ class _RecordBarState extends State<RecordBar> {
       if (event is KeyboardEvent &&
           event.specialKey == Config.endKey &&
           widget.service.status == ProcessStatus.running) {
-        stopService();
+        unawaited(stopService());
       }
     }
   }
@@ -127,6 +133,7 @@ class _RecordBarState extends State<RecordBar> {
     await windowManager.setTitleBarStyle(TitleBarStyle.normal);
     await windowManager.show();
     // await windowManager.focus();
+    log('Restored window', name: 'RecordBar');
   }
 
   void _serviceListener(ProcessStatus status, String? data) {
@@ -134,18 +141,19 @@ class _RecordBarState extends State<RecordBar> {
       log('Service stopped', name: 'RecordBar');
       if (context.mounted && !disposed) {
         log('Popping RecordBar', name: 'RecordBar');
-        cleanUp().then((_) {
+        unawaited(cleanUp().then((_) {
           Navigator.of(context).pop();
-        });
+        }));
       }
     }
   }
 
-  void stopService() {
+  Future<void> stopService() async {
     final service = widget.service;
+    if (service.status != ProcessStatus.running) return;
     if (service is WatchService) {
       log('Stopping WatchService', name: 'RecordBar');
-      service.stopRecording();
+      await service.stopRecording();
     } else if (service is ExecuteService) {
       log('Stopping ExecuteService', name: 'RecordBar');
       service.kill();
@@ -169,10 +177,14 @@ class _RecordBarState extends State<RecordBar> {
   }
 
   Future<void> cleanUp() async {
-    disposed = true;
+    log('Cleaning up', name: 'RecordBar');
+    setState(() {
+      disposed = true;
+    });
+
     await restoreWindow();
-    stopService();
-    _keyboardWatcher.stopRecording();
+    await stopService();
+    await _keyboardWatcher.stopRecording();
 
     widget.service.removeListener(_serviceListener);
     _keyboardWatcher.removeListener(_onKeyboardEvent);

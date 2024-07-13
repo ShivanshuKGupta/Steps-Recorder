@@ -31,7 +31,8 @@ class WatchService extends ProcessService {
   });
 
   @override
-  void _log(dynamic msg) => dev.log(msg.toString(), name: 'Watch Service');
+  void _log(dynamic msg) =>
+      dev.log(msg.toString(), name: 'Watch Service ($getPid)');
 
   /// Starts recording the events
   Future<void> record() async {
@@ -65,8 +66,7 @@ class WatchService extends ProcessService {
   ///
   /// If the watcher doesn't stops within 500 milliseconds
   /// it will be killed
-  void stopRecording() {
-    _stop();
+  Future<void> stopRecording() async {
     Future.delayed(const Duration(milliseconds: 500), () {
       if (status == ProcessStatus.running) {
         _kill();
@@ -74,6 +74,11 @@ class WatchService extends ProcessService {
             "Watch service didn't exited within 500 ms, and so was killed!");
       }
     });
+    await _stop();
+  }
+
+  void kill() {
+    _kill();
   }
 
   Future<void> _saveEvents() async {

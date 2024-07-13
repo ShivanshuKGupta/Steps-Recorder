@@ -51,6 +51,9 @@ abstract class ProcessService {
   /// Logs a message
   void _log(dynamic msg);
 
+  /// Get PID
+  int? get getPid => _process?.pid;
+
   /// Starts the process
   Future<void> _start(String command, List<String> arguments) async {
     if (_status == ProcessStatus.running || _process != null) {
@@ -59,7 +62,7 @@ abstract class ProcessService {
 
     _log('Starting Process...');
     _process = await Process.start(command, arguments);
-    _log('Process started');
+    _log('Process $getPid started');
 
     _status = ProcessStatus.running;
     try {
@@ -78,7 +81,7 @@ abstract class ProcessService {
         }
       }
 
-      _log('Process exited with code $exitCode');
+      _log('Process $getPid exited with code $exitCode');
       _process = null;
       try {
         _onExit?.call(_status);
@@ -92,13 +95,18 @@ abstract class ProcessService {
   }
 
   /// Stops the process
-  void _stop() {
+  Future<void> _stop() async {
+    _log('Stopping Process $getPid');
     _status = ProcessStatus.stopped;
+    _log('Flushing...');
     _process?.stdin.writeln('exit');
+    await _process?.stdin.flush();
+    _log('Flushed!');
   }
 
   /// Kills the process
   void _kill() {
+    _log('Killing Process $getPid');
     _status = ProcessStatus.killed;
     _process?.kill();
   }

@@ -42,8 +42,8 @@ extension ScriptFunctions on Script {
   }
 
   /// Stops the script recording
-  void stopRecording() {
-    watchService.stopRecording();
+  Future<void> stopRecording() async {
+    await watchService.stopRecording();
   }
 
   /// Adds a listener to the script

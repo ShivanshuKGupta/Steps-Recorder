@@ -56,13 +56,15 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
       ),
       onPressed: () async {
         if (widget.script.watchServiceStatus == ProcessStatus.running) {
-          widget.script.stopRecording();
+          await widget.script.stopRecording();
         } else {
-          await widget.script.record();
+          // await widget.script.record();
           await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) =>
                   RecordBar(service: widget.script.watchService),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
             ),
           );
         }
