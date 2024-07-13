@@ -12,8 +12,11 @@ import '../events/mouse/mouse_event.dart';
 part 'script_functions.g.dart';
 
 class Script {
+  /// The title/id of the script
+  final String title;
+
   /// The title of the script
-  String title;
+  String? displayTitle;
 
   /// The description of the script
   String? description;
@@ -53,6 +56,7 @@ class Script {
     required this.createdAt,
     required this.updatedAt,
     this.description,
+    this.displayTitle,
   });
 
   Map<String, dynamic> toJson() {
@@ -70,6 +74,7 @@ class Script {
     }
     return {
       'title': title,
+      'displayTitle': displayTitle,
       'description': description,
       'events': convertedEvents.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
@@ -79,6 +84,7 @@ class Script {
 
   Script.fromJson(Map<String, dynamic> data)
       : title = data['title'],
+        displayTitle = data['displayTitle'] ?? data['title'],
         description = data['description'],
         events = (data['events'] as List<dynamic>)
             .map((e) => Event.parse(e as Map<String, dynamic>))

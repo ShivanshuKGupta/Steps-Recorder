@@ -19,13 +19,12 @@ class ScriptWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final color =
-        colorsForScripts[script.createdAt.hashCode % colorsForScripts.length]
-            .withOpacity(0.3);
+        colorsForScripts[script.createdAt.hashCode % colorsForScripts.length];
 
     return Card(
       key: ValueKey(script.createdAt),
       elevation: 0,
-      color: color,
+      color: color.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ListTile(
         contentPadding:
@@ -33,7 +32,7 @@ class ScriptWidget extends StatelessWidget {
         onTap: _edit,
         title: RichText(
           text: TextSpan(
-            text: script.title,
+            text: script.displayTitle,
             style: textTheme.titleLarge!.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -53,11 +52,40 @@ class ScriptWidget extends StatelessWidget {
                   ? 'No description'
                   : script.description!,
             ),
-            Text(
-              'CreatedAt: ${script.createdAt.toMonthString()} ${script.createdAt.amPmTime}',
-            ),
-            Text(
-              'UpdatedAt: ${script.updatedAt.toMonthString()} ${script.updatedAt.amPmTime}',
+            Wrap(
+              spacing: 10,
+              runSpacing: 5,
+              alignment: WrapAlignment.center,
+              runAlignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.calendar_today_rounded, size: 15, color: color),
+                    Text(
+                      ' ${script.createdAt.toMonthString()} ${script.createdAt.amPmTime}',
+                      style: textTheme.bodySmall!.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.update_rounded, size: 15, color: color),
+                    Text(
+                      ' ${script.updatedAt.toMonthString()} ${script.updatedAt.amPmTime}',
+                      style: textTheme.bodySmall!.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -99,5 +127,13 @@ class ScriptWidget extends StatelessWidget {
     );
   }
 
-  Future<void> _delete() async => script.delete();
+  Future<void> _delete() async {
+    final bool? confirmation = await showConfirmDialog(
+      title: 'Delete Script?',
+      content:
+          'Are you sure you want to delete \'${script.displayTitle}\' script?',
+    );
+    if (confirmation == null || !confirmation) return;
+    script.delete();
+  }
 }

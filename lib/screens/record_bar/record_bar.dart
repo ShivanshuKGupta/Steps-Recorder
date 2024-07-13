@@ -65,15 +65,24 @@ class _RecordBarState extends State<RecordBar> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      elevation: 0,
+      color: Colors.transparent,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.all(0),
           backgroundColor: colorScheme.surface,
         ),
         icon: Icon(
           Icons.stop,
           color: colorScheme.error,
         ),
-        label: const Text('Stop'),
+        label: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('Press ${Config.endKey.name} to stop'),
+        ),
         onPressed: stopService,
       ),
     );
@@ -103,26 +112,27 @@ class _RecordBarState extends State<RecordBar> {
     size = await windowManager.getSize();
 
     log('Shortening window', name: 'RecordBar');
-    const minSize = Size(100, 40);
+    const minSize = Size(150, 40);
     await windowManager.setMinimumSize(minSize);
     await windowManager.setSize(minSize);
-    await windowManager.setAlignment(Alignment.centerRight, animate: true);
+    await windowManager.setBackgroundColor(Colors.transparent);
+    await windowManager.setAlignment(Alignment.centerRight);
     await windowManager.setAlwaysOnTop(true);
-    await windowManager.blur();
-    await windowManager.setSkipTaskbar(true);
     await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+    await windowManager.setAsFrameless();
+    await windowManager.blur();
   }
 
   Future<void> restoreWindow() async {
     log('Restoring window', name: 'RecordBar');
     await windowManager.setMinimumSize(Config.minWindowSize);
     await windowManager.setSize(size);
+    await windowManager.setBackgroundColor(Colors.transparent);
+    await windowManager.setAlignment(Alignment.center);
     await windowManager.setAlwaysOnTop(false);
-    await windowManager.setSkipTaskbar(false);
     await windowManager.setTitleBarStyle(TitleBarStyle.normal);
-    await windowManager.setAlignment(Alignment.center, animate: true);
     await windowManager.show();
-    await windowManager.focus();
+    // await windowManager.focus();
   }
 
   void _serviceListener(ProcessStatus status, String? data) {

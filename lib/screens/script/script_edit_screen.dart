@@ -61,7 +61,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: TextEditingController(text: script.title),
+              controller: TextEditingController(text: script.displayTitle),
               decoration: InputDecoration(
                 hintText: 'No Title',
                 border: InputBorder.none,
@@ -71,7 +71,7 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
               ),
               style: textTheme.titleLarge,
               onChanged: (value) {
-                script.title = value;
+                script.displayTitle = value;
               },
               onEditingComplete: () async {
                 try {

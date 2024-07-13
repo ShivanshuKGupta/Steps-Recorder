@@ -31,7 +31,7 @@ class Config {
   static ThemeMode themeMode = ThemeMode.system;
 
   /// The minimum window size of the app.
-  static Size minWindowSize = const Size(400, 400);
+  static Size minWindowSize = const Size(600, 400);
 
   /// The initial window size of the app.
   static Size initialWindowSize = const Size(800, 600);

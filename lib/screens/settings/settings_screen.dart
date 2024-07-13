@@ -86,59 +86,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ),
-          TextField(
-            controller:
-                TextEditingController(text: Config.startPlayingKeyShortcut),
-            decoration: InputDecoration(
-              hintText: 'Ctrl + Alt + p',
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-              hintStyle: textTheme.bodyLarge,
+          if (false)
+            TextField(
+              controller:
+                  TextEditingController(text: Config.startPlayingKeyShortcut),
+              decoration: InputDecoration(
+                hintText: 'Ctrl + Alt + p',
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: textTheme.bodyLarge,
+              ),
+              style: textTheme.titleLarge,
+              onChanged: (value) {
+                Config.startPlayingKeyShortcut = value;
+              },
+              onEditingComplete: () async {
+                setState(() {});
+              },
             ),
-            style: textTheme.titleLarge,
-            onChanged: (value) {
-              Config.startPlayingKeyShortcut = value;
-            },
-            onEditingComplete: () async {
-              setState(() {});
-            },
-          ),
-          TextField(
-            controller:
-                TextEditingController(text: Config.startRecordingKeyShortcut),
-            decoration: InputDecoration(
-              hintText: 'Ctrl + Alt + r',
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-              hintStyle: textTheme.bodyLarge,
+          if (false)
+            TextField(
+              controller:
+                  TextEditingController(text: Config.startRecordingKeyShortcut),
+              decoration: InputDecoration(
+                hintText: 'Ctrl + Alt + r',
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: textTheme.bodyLarge,
+              ),
+              style: textTheme.titleLarge,
+              onChanged: (value) {
+                Config.startRecordingKeyShortcut = value;
+              },
+              onEditingComplete: () async {
+                setState(() {});
+              },
             ),
-            style: textTheme.titleLarge,
-            onChanged: (value) {
-              Config.startRecordingKeyShortcut = value;
-            },
-            onEditingComplete: () async {
-              setState(() {});
-            },
-          ),
-          TextField(
-            controller: TextEditingController(text: Config.port.toString()),
-            decoration: InputDecoration(
-              hintText: '4040',
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-              hintStyle: textTheme.bodyLarge,
+          if (false)
+            TextField(
+              controller: TextEditingController(text: Config.port.toString()),
+              decoration: InputDecoration(
+                hintText: '4040',
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: textTheme.bodyLarge,
+              ),
+              style: textTheme.titleLarge,
+              onChanged: (value) {
+                Config.port = int.tryParse(value) ?? Config.port;
+                if (Config.port < 1024 || Config.port > 65535) {
+                  Config.port = 4040;
+                }
+              },
+              onEditingComplete: () async {
+                setState(() {});
+              },
             ),
-            style: textTheme.titleLarge,
-            onChanged: (value) {
-              Config.port = int.tryParse(value) ?? Config.port;
-              if (Config.port < 1024 || Config.port > 65535) {
-                Config.port = 4040;
-              }
-            },
-            onEditingComplete: () async {
-              setState(() {});
-            },
-          ),
         ],
       ),
     );

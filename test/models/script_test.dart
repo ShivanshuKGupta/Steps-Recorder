@@ -27,7 +27,7 @@ void main() {
       final json = script.toJson();
       final newScript = Script.fromJson(json);
 
-      expect(newScript.title, script.title);
+      expect(newScript.displayTitle, script.displayTitle);
       expect(newScript.description, script.description);
       expect(newScript.createdAt, script.createdAt);
       expect(newScript.updatedAt, script.updatedAt);
