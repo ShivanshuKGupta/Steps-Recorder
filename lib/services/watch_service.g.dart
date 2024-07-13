@@ -106,10 +106,9 @@ class WatchService extends ProcessService {
       // Removing the last keyboard events, if they were created due to
       // the end key being pressed
       Event? lastEvent = script.events.lastOrNull;
-      while (lastEvent is KeyboardEvent) {
-        if (lastEvent.specialKey == Config.endKey) {
-          script.events.removeLast();
-        }
+      while (
+          lastEvent is KeyboardEvent && lastEvent.specialKey == Config.endKey) {
+        script.events.removeLast();
         lastEvent = script.events.lastOrNull;
       }
 
