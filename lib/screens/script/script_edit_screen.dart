@@ -227,6 +227,16 @@ class _ScriptEditScreenState extends State<ScriptEditScreen> {
                     });
                   },
                 ),
+                IconButton(
+                  tooltip: 'Copy Event',
+                  icon: const Icon(Icons.copy_rounded, color: Colors.blue),
+                  onPressed: () {
+                    setState(() {
+                      script.events
+                          .insert(script.events.indexOf(event), event.clone());
+                    });
+                  },
+                ),
                 const SizedBox(width: 30),
               ],
             ),

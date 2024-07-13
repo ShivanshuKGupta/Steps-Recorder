@@ -13,4 +13,9 @@ class MouseEventCollection extends EventCollection {
   List<Event> buildEvents() {
     return events;
   }
+
+  @override
+  MouseEventCollection clone() {
+    return MouseEventCollection()..events.addAll(events);
+  }
 }

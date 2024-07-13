@@ -25,4 +25,12 @@ class CustomEvent extends Event {
             CustomCommand.values.firstWhere((e) => e.name == json['command']),
         delay = num.tryParse(json['delay'].toString()),
         super.fromJson();
+
+  @override
+  CustomEvent clone() {
+    return CustomEvent(
+      command: command,
+      delay: delay,
+    );
+  }
 }

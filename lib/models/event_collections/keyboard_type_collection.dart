@@ -23,4 +23,11 @@ class KeyboardTypeCollection extends EventCollection {
     }
     return events;
   }
+
+  @override
+  KeyboardTypeCollection clone() {
+    return KeyboardTypeCollection(
+      keystrokes: keystrokes,
+    );
+  }
 }

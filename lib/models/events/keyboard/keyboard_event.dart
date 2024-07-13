@@ -32,4 +32,13 @@ class KeyboardEvent extends Event {
         state = KeyboardButtonState.values
             .firstWhere((e) => e.name == json['state']),
         super.fromJson();
+
+  @override
+  KeyboardEvent clone() {
+    return KeyboardEvent(
+      key: key,
+      specialKey: specialKey,
+      state: state,
+    );
+  }
 }

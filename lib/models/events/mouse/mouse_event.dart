@@ -48,4 +48,16 @@ class MouseEvent extends Event {
             .where((e) => e.name == json['button'].toString())
             .firstOrNull,
         super.fromJson();
+
+  @override
+  MouseEvent clone() {
+    return MouseEvent(
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      mouseEventType: mouseEventType,
+      button: button,
+    );
+  }
 }

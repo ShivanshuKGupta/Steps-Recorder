@@ -2,7 +2,7 @@ import 'custom/custom_event.dart';
 import 'keyboard/keyboard_event.dart';
 import 'mouse/mouse_event.dart';
 
-class Event {
+abstract class Event {
   final String type;
 
   Event({required this.type});
@@ -14,6 +14,8 @@ class Event {
   }
 
   Event.fromJson(Map<String, dynamic> json) : type = json['type'].toString();
+
+  Event clone();
 
   static Event parse(Map<String, dynamic> json) {
     final type = json['type'].toString();
