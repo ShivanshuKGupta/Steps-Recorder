@@ -34,18 +34,18 @@ class Script {
   late final File scriptFile = File(scriptFilePath);
 
   /// The service to execute the script
-  late final _executeService = (ExecuteService.allServices[scriptFilePath] ??=
+  late final executeService = (ExecuteService.allServices[scriptFilePath] ??=
       ExecuteService(scriptFilePath: scriptFilePath));
 
   /// The status of the execute service
-  ProcessStatus get executeServiceStatus => _executeService.status;
+  ProcessStatus get executeServiceStatus => executeService.status;
 
   /// The service to watch the script
-  late final _watchService = (WatchService.allServices[scriptFilePath] ??=
+  late final watchService = (WatchService.allServices[scriptFilePath] ??=
       WatchService(outputScriptFilePath: scriptFilePath));
 
   /// The status of the watch service
-  ProcessStatus get watchServiceStatus => _watchService.status;
+  ProcessStatus get watchServiceStatus => watchService.status;
 
   Script({
     required this.title,

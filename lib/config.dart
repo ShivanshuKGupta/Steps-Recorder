@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'models/events/keyboard/special_keys.dart';
 
@@ -26,6 +27,15 @@ class Config {
   /// The port on which the background service will run.
   static int port = 4040;
 
+  /// The theme mode of the app.
+  static ThemeMode themeMode = ThemeMode.system;
+
+  /// The minimum window size of the app.
+  static Size minWindowSize = const Size(400, 400);
+
+  /// The initial window size of the app.
+  static Size initialWindowSize = const Size(800, 600);
+
   Config._();
 
   static Map<String, dynamic> toJson() => {
@@ -33,6 +43,7 @@ class Config {
         'startRecordingKeyShortcut': startRecordingKeyShortcut,
         'startPlayingKeyShortcut': startPlayingKeyShortcut,
         'port': port,
+        'themeMode': themeMode.name,
       };
 
   static void loadFromJson(Map<String, dynamic> json) {
@@ -42,6 +53,10 @@ class Config {
     startRecordingKeyShortcut = json['startRecordingKeyShortcut'];
     startPlayingKeyShortcut = json['startPlayingKeyShortcut'];
     port = int.tryParse(json['port'].toString()) ?? port;
+    themeMode = ThemeMode.values
+            .where((e) => e.name == json['themeMode'])
+            .firstOrNull ??
+        themeMode;
   }
 
   /// Save the current config to the config.json file in the [pythonScriptsFolderPath]

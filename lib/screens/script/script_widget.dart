@@ -17,13 +17,14 @@ class ScriptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// an auto generated bright color based on the script's creation date
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final color =
-        colorsForScripts[script.createdAt.hashCode % colorsForScripts.length];
+        colorsForScripts[script.createdAt.hashCode % colorsForScripts.length]
+            .withOpacity(0.3);
 
     return Card(
       key: ValueKey(script.createdAt),
-      elevation: 10,
+      elevation: 0,
       color: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ListTile(
@@ -34,15 +35,12 @@ class ScriptWidget extends StatelessWidget {
           text: TextSpan(
             text: script.title,
             style: textTheme.titleLarge!.copyWith(
-              color: colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
             children: [
               TextSpan(
                 text: '   ${script.updatedAt.timeAgo()}',
-                style: textTheme.bodySmall!.copyWith(
-                  color: colorScheme.onPrimary,
-                ),
+                style: textTheme.bodySmall,
               ),
             ],
           ),
@@ -54,17 +52,12 @@ class ScriptWidget extends StatelessWidget {
               script.description == null || script.description!.isEmpty
                   ? 'No description'
                   : script.description!,
-              style: TextStyle(
-                color: colorScheme.onPrimary,
-              ),
             ),
             Text(
               'CreatedAt: ${script.createdAt.toMonthString()} ${script.createdAt.amPmTime}',
-              style: TextStyle(color: colorScheme.onPrimary),
             ),
             Text(
               'UpdatedAt: ${script.updatedAt.toMonthString()} ${script.updatedAt.amPmTime}',
-              style: TextStyle(color: colorScheme.onPrimary),
             ),
           ],
         ),

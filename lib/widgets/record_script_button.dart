@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
 
-import '../config.dart';
 import '../globals.dart';
-import '../models/events/event.dart';
-import '../models/events/keyboard/keyboard_event.dart';
 import '../models/script/script.dart';
+import '../screens/record_bar/record_bar.dart';
 import '../services/notification_service.dart';
 import '../services/process_service.dart';
 import '../utils/widgets/loading_elevated_button.dart';
@@ -24,36 +19,16 @@ class RecordScriptButton extends StatefulWidget {
 
 class _RecordScriptButtonState extends State<RecordScriptButton> {
   late ProcessStatus lastStatus = widget.script.watchServiceStatus;
-  final WatchService _keyboardWatcher = WatchService(
-    outputScriptFilePath: null,
-    keyboardOnlyMode: true,
-  );
 
   @override
   void initState() {
     super.initState();
     widget.script.addListener(_onScriptEvent);
-    _keyboardWatcher.addListener(_onKeyboardEvent);
-    unawaited(_keyboardWatcher
-        .record()
-        .then(
-          (_) => log('Keyboard watcher started', name: 'RecordScriptButton'),
-        )
-        .onError(
-          (error, stackTrace) => log(
-            'Error starting keyboard watcher: $error',
-            name: 'RecordScriptButton',
-            error: error,
-            stackTrace: stackTrace,
-          ),
-        ));
   }
 
   @override
   void dispose() {
     widget.script.removeListener(_onScriptEvent);
-    _keyboardWatcher.stopRecording();
-    _keyboardWatcher.removeListener(_onKeyboardEvent);
     super.dispose();
   }
 
@@ -84,6 +59,12 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
           widget.script.stopRecording();
         } else {
           await widget.script.record();
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  RecordBar(service: widget.script.watchService),
+            ),
+          );
         }
       },
     );
@@ -93,32 +74,5 @@ class _RecordScriptButtonState extends State<RecordScriptButton> {
     setState(() {
       if (data != null) showMsg(data);
     });
-    if (lastStatus == widget.script.watchServiceStatus) return;
-    if (widget.script.watchServiceStatus == ProcessStatus.running) {
-      await windowManager.minimize();
-    } else {
-      showMsg('Recording saved: ${widget.script.scriptFilePath}');
-      await windowManager.restore();
-      await windowManager.show();
-      await windowManager.focus();
-    }
-    lastStatus = widget.script.watchServiceStatus;
-  }
-
-  void _onKeyboardEvent(ProcessStatus status, String? data) {
-    if (data == null) return;
-    final List<Event?> events = data.split('\n').map((e) {
-      if (e.isEmpty) return null;
-      final Map<String, dynamic> data = json.decode(e.trim());
-      return Event.parse(data);
-    }).toList();
-    for (final event in events) {
-      if (event is KeyboardEvent &&
-          event.specialKey == Config.endKey &&
-          widget.script.watchServiceStatus == ProcessStatus.running) {
-        log('Stopping recording', name: 'RecordScriptButton');
-        widget.script.stopRecording();
-      }
-    }
   }
 }

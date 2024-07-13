@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:launch_at_startup/launch_at_startup.dart';
 
 import '../../config.dart';
 import '../../globals.dart';
@@ -22,16 +21,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(launchAtStartup.isEnabled().then(
-      (enabled) async {
-        if (!enabled) {
-          Config.startPlayingKeyShortcut = null;
-          Config.startRecordingKeyShortcut = null;
-          await Config.save();
-          setState(() {});
-        }
-      },
-    ));
+    // unawaited(launchAtStartup.isEnabled().then(
+    //   (enabled) async {
+    //     if (!enabled) {
+    //       Config.startPlayingKeyShortcut = null;
+    //       Config.startRecordingKeyShortcut = null;
+    //       await Config.save();
+    //       setState(() {});
+    //     }
+    //   },
+    // ));
   }
 
   @override
@@ -55,8 +54,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             label: const Text('Save'),
             onPressed: () async {
-              await Config.save();
-              showMsg('Settings saved!');
               if (context.mounted) {
                 Navigator.pop(context);
               }

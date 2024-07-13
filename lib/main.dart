@@ -3,18 +3,31 @@ import 'package:window_manager/window_manager.dart';
 
 import 'app.dart';
 import 'config.dart';
+import 'utils/widgets/theme_mode_button.dart';
 
 void main(List<String> arguments) async {
+  /// Handle the arguments, if handled then the app won't run.
   // if (await handleArguments(arguments)) return;
 
+  /// Initializes certain services and the app.
+  await initialize();
+
+  /// Set the error widget to show a custom error message.
+  setErrorWidget();
+
+  /// Run the app.
+  runApp(const App());
+}
+
+Future<void> initialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Config.loadFromFile();
   await WindowManager.instance.ensureInitialized();
 
   await windowManager.waitUntilReadyToShow(
-    const WindowOptions(
-      minimumSize: Size(600, 400),
-      size: Size(800, 600),
+    WindowOptions(
+      minimumSize: Config.minWindowSize,
+      size: Config.initialWindowSize,
     ),
     () async {
       await windowManager.show();
@@ -22,9 +35,7 @@ void main(List<String> arguments) async {
     },
   );
 
-  setErrorWidget();
-
-  runApp(const App());
+  themeMode.value = Config.themeMode;
 }
 
 void setErrorWidget() {

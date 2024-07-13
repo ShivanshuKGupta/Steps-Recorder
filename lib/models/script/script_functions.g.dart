@@ -28,22 +28,22 @@ extension ScriptFunctions on Script {
   /// Use [watchServiceStatus] to check the status of the service
   Future<void> play() async {
     await save();
-    await _executeService.play();
+    await executeService.play();
   }
 
   /// Stops the script execution
   void stop() {
-    _executeService.kill();
+    executeService.kill();
   }
 
   /// Records the script
   Future<void> record() async {
-    await _watchService.record();
+    await watchService.record();
   }
 
   /// Stops the script recording
   void stopRecording() {
-    _watchService.stopRecording();
+    watchService.stopRecording();
   }
 
   /// Adds a listener to the script
@@ -51,8 +51,8 @@ extension ScriptFunctions on Script {
   /// These listeners are called whenever the status of the
   /// [watchServiceStatus] or [executeServiceStatus] changes
   void addListener(void Function(ProcessStatus status, String? data) listener) {
-    _executeService.addListener(listener);
-    _watchService.addListener(listener);
+    executeService.addListener(listener);
+    watchService.addListener(listener);
   }
 
   /// Removes a listener from the script
@@ -60,8 +60,8 @@ extension ScriptFunctions on Script {
   /// This listener will no longer be called when the status of the
   /// [watchServiceStatus] or [executeServiceStatus] changes
   void removeListener(void Function(ProcessStatus, String?) listener) {
-    _executeService.removeListener(listener);
-    _watchService.removeListener(listener);
+    executeService.removeListener(listener);
+    watchService.removeListener(listener);
   }
 }
 
