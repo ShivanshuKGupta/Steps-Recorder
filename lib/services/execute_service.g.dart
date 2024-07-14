@@ -55,8 +55,6 @@ class ExecuteService extends ProcessService {
   //   });
   // }
 
-  void kill() => _kill();
-
   /// Reads all events from the [scriptFilePath] file,
   /// and then creates a .tmp file with all its events in it
   Future<void> _createTmpFile() async {

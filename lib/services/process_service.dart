@@ -105,7 +105,7 @@ abstract class ProcessService {
   }
 
   /// Kills the process
-  void _kill() {
+  void kill() {
     _log('Killing Process $getPid');
     _status = ProcessStatus.killed;
     _process?.kill();

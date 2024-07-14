@@ -69,16 +69,12 @@ class WatchService extends ProcessService {
   Future<void> stopRecording() async {
     Future.delayed(const Duration(milliseconds: 500), () {
       if (status == ProcessStatus.running) {
-        _kill();
+        kill();
         showError(
             "Watch service didn't exited within 500 ms, and so was killed!");
       }
     });
     await _stop();
-  }
-
-  void kill() {
-    _kill();
   }
 
   Future<void> _saveEvents() async {

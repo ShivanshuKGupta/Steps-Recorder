@@ -7,14 +7,37 @@ import 'globals.dart';
 import 'screens/home/home_screen.dart';
 import 'utils/widgets/theme_mode_button.dart';
 
-class App extends StatelessWidget with WindowListener {
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> with WindowListener {
   @override
   void onWindowClose() {
-    stopAllProcessServices();
     super.onWindowClose();
+    stopAllProcessServicesAndExit();
   }
 
-  const App({super.key});
+  @override
+  void onWindowFocus() {
+    setState(() {});
+    super.onWindowFocus();
+  }
+
+  @override
+  void initState() {
+    windowManager.addListener(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
