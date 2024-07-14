@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import '../models/events/event.dart';
 import '../models/events/keyboard/keyboard_event.dart';
 import '../models/events/keyboard/special_keys.dart';
@@ -86,7 +88,7 @@ class KeyCombinationDetector {
     }
     _currentKeyCombination.sort();
     if (currentKeyCombination == keyCombination) {
-      print('Key combination detected: $keyCombination');
+      debugPrint('Key combination detected: $keyCombination');
       onDetect();
     }
   }
@@ -103,7 +105,7 @@ class KeyCombinationDetector {
   }
 
   void _onKeyboardEvent(ProcessStatus status, String? data) {
-    print('Received keyboard event: $data');
+    debugPrint('Received keyboard event: $data');
     if (data == null) return;
     final List<Event?> events = data.split('\n').map((e) {
       if (e.isEmpty) return null;

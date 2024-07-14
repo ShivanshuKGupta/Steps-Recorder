@@ -24,7 +24,6 @@ void main() {
       ];
 
       final reducedEvents = reduceEvents(events);
-      print(reducedEvents);
 
       expect(reducedEvents.length, 4);
       expect(reducedEvents[0].runtimeType, KeyboardTypeCollection);
@@ -57,7 +56,6 @@ void main() {
       ];
 
       final reducedEvents = reduceEvents(events);
-      print(reducedEvents);
 
       expect(reducedEvents.length, 3);
       expect(reducedEvents[0].runtimeType, MouseEventCollection);
