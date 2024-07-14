@@ -13,7 +13,7 @@ void main(List<String> arguments) async {
   await initialize();
 
   /// Stops all child processes when the app is closed.
-  await setCleanup();
+  await setProcessSignalListeners();
 
   /// Set the error widget to show a custom error message.
   setErrorWidget();

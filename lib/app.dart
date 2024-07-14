@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_manager/window_manager.dart';
 
+import 'cleanup.dart';
 import 'globals.dart';
 import 'screens/home/home_screen.dart';
 import 'utils/widgets/theme_mode_button.dart';
 
-class App extends StatelessWidget {
+class App extends StatelessWidget with WindowListener {
+  @override
+  void onWindowClose() {
+    stopAllProcessServices();
+    super.onWindowClose();
+  }
+
   const App({super.key});
 
   @override

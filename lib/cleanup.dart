@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'services/process_service.dart';
 
-Future<void> setCleanup() async {
-  ProcessSignal.sigint.watch().listen(_stopAllServices);
+Future<void> setProcessSignalListeners() async {
+  ProcessSignal.sigint.watch().listen((_) => stopAllProcessServices());
   if (!Platform.isWindows) {
-    ProcessSignal.sigterm.watch().listen(_stopAllServices);
+    ProcessSignal.sigterm.watch().listen((_) => stopAllProcessServices());
   }
 }
 
-void _stopAllServices(ProcessSignal signal) {
+void stopAllProcessServices() {
   WatchService.allServices.forEach((filePath, service) {
     service.kill();
   });
